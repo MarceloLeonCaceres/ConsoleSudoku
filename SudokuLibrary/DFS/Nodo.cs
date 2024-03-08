@@ -26,7 +26,10 @@ namespace SudokuLibrary.DFS
             foreach(Accion accion in  accionesSiguientes)
             {
                 Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, accion);
-                nodosSiguientes.Add(nodoPosible);
+                if (nodoPosible.Tablero.EsValida)
+                {
+                    nodosSiguientes.Add(nodoPosible);
+                }
             }
             return nodosSiguientes;
         }
@@ -40,6 +43,8 @@ namespace SudokuLibrary.DFS
         public bool Equals(Nodo? other)
         {
             if(other is null) { return false; }
+
+            if (other.Tablero.CeldasConocidas.Count != this.Tablero.CeldasConocidas.Count) return false;
 
             return Tablero.Equals(other.Tablero);
         }

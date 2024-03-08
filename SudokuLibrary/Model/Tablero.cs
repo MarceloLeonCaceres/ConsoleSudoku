@@ -149,13 +149,8 @@ namespace SudokuLibrary.Model
         public List<Accion>? AccionesSiguientes()
         {
             List<Accion> accionesSiguientes = new List<Accion>();
-            int menosInstancias = 10;
-            int numCeldasFactibles = 100;
-            int numeroConMayorIndice = 0;
             for (int num = 0; num < 9; num++)
             {
-                int instanciasPendientes = Pendientes[num].filas.Count;
-                int countCeldasFactibles = CeldasPara[num].Count;
                 foreach (int k in Pendientes[num].grupos)
                 {
                     int cuenta = CeldasPara[num].Where(c => c.Z == k).Count();
@@ -164,29 +159,39 @@ namespace SudokuLibrary.Model
                         Celda celdaUnicaPosible = CeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
                         Accion siguienteAccion = new Accion(celdaUnicaPosible, num+1);
                         accionesSiguientes.Add(siguienteAccion);
-                        menosInstancias = 1;
-                    }
-                    else if(cuenta > 0 && cuenta <= menosInstancias)
-                    {
-                        if(cuenta < menosInstancias)
-                        {
-                            numeroConMayorIndice = num+1;
-                            menosInstancias = cuenta;
-                            numCeldasFactibles = countCeldasFactibles;
-                        }
-                        else
-                        {
-                            if(numCeldasFactibles < countCeldasFactibles)
-                            {
-                                numeroConMayorIndice = num + 1;
-                            }
-                        }
                     }
                 }
             }
             if(accionesSiguientes.Count > 0)
             {
                 return accionesSiguientes;
+            }
+
+            int menosInstancias = 10;
+            int menosCeldasFactibles = 100;
+            int numeroConMayorIndice = 0;
+            for (int num = 0; num < 9; num++)
+            {
+                int instanciasPendientesNum = Pendientes[num].filas.Count;
+                int countCeldasFactiblesNum = CeldasPara[num].Count;
+
+                if (instanciasPendientesNum > 0 && instanciasPendientesNum <= menosInstancias)
+                {
+                    if (instanciasPendientesNum < menosInstancias)
+                    {
+                        numeroConMayorIndice = num + 1;
+                        menosInstancias = instanciasPendientesNum;
+                        menosCeldasFactibles = countCeldasFactiblesNum;
+                    }
+                    else // (instanciasPendientesNum == menosInstancias)
+                    {
+                        if (countCeldasFactiblesNum < menosCeldasFactibles )
+                        {
+                            numeroConMayorIndice = num + 1;
+                            menosCeldasFactibles = countCeldasFactiblesNum;
+                        }
+                    }
+                }
             }
             if(numeroConMayorIndice == 0)
             {
@@ -285,7 +290,8 @@ namespace SudokuLibrary.Model
         public bool Equals(Tablero? other)
         {
             if (other is null) return false;
-            if (other.CeldasConocidas.Count != this.CeldasConocidas.Count) return false;
+
+            if(this.CeldasConocidas.Count != other.CeldasConocidas.Count) return false;
 
             for (int i = 0; i < 9; i++)
             {

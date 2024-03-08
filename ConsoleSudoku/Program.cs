@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 
 
+Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_INTERMEDIA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_1), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_Sin_Solucion), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H), null, null);
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
+// Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_9), null, null);
@@ -62,13 +63,13 @@ while (frontera.Count > 0)
                 if (!visitados.Contains(nodo) && !frontera.Contains(nodo))
                 {
                     frontera.Push(nodo);
-                    Console.WriteLine("No visitado y no en frontera");
+                    //Console.WriteLine("No visitado y no en frontera");
                 }
                 else
                 {
-                    Console.WriteLine("Ya visitado o ya esta en frontera");
+                    //Console.WriteLine("Ya visitado o ya esta en frontera");
                 }
-                nodo.Print();
+                //nodo.Print();
             }
         }
     }
