@@ -6,44 +6,49 @@ using System.Linq;
 using System.Text;
 
 
-// Con Tablero
-// Tablero tablero = new Tablero(Matrices.MATRIZ_H);
-//Tablero tablero = new Tablero(Matrices.MATRIZ_H_2);
-//Tablero tablero = new Tablero(Matrices.MATRIZ_DIAGONAL);
-//tablero.PrintBoard();
-//tablero.PrintPendientes();
-//tablero.PrintCeldasPara();
-//tablero.DetectCeldasUnicas();
-//tablero.AccionesSiguientes();
-//tablero.PrintResumen();
-
-// Tablero hijo = new Tablero(tablero, new Celda(1, 8, 2), 3);
-// Tablero hijo = new Tablero(tablero, new Accion(1, 8, 3));
-
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H), null, null);
-//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_8_y_9), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_8_y_9), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_1), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_Sin_Solucion), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H), null, null);
+Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_6), null, null);
 Stack<Nodo> frontera = new Stack<Nodo>();
 List<Nodo> visitados = new List<Nodo>();
-
+bool encontroSolucion = false;
 frontera.Push(raiz);
 while (frontera.Count > 0)
 {
     Nodo nodoActual = frontera.Pop();
     if (nodoActual.Tablero.EsSolucion) 
     {
+        Console.Clear();
         Console.WriteLine("Encontre la solucion!!!");
+        Console.WriteLine();
+        raiz.Print();
+        Console.WriteLine();
         nodoActual.Print();
         Console.WriteLine();
+        List<Accion> acciones = new List<Accion>();
         while(nodoActual.Padre is not null)
         {
-            Console.WriteLine("Nodo Padre:");
-            nodoActual.Print();
-            //nodoActual = visitados.Select();
+            //Console.WriteLine("Nodo Padre:");
+            //nodoActual.Print();
+            acciones.Add(nodoActual.Accion);
+            nodoActual = visitados.Find(n => n.Tablero == nodoActual.Padre);
         }
+        encontroSolucion = true;
+        acciones.Reverse();
+
+        Console.WriteLine("Encontre la solucion!!!");
+        foreach (Accion accion in acciones)
+        {
+            Console.WriteLine($"{accion.Celda}  => {accion.Numero}");
+        }
+        Console.WriteLine();
         break;
     }
     else
@@ -69,4 +74,7 @@ while (frontera.Count > 0)
     }
 }
 
-Console.WriteLine("No hubo solucion, se terminaron los elementos de la frontera.");
+if(encontroSolucion == false)
+{
+    Console.WriteLine("No hubo solucion, se terminaron los elementos de la frontera.");
+}
