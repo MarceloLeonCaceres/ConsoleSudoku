@@ -285,8 +285,9 @@ namespace SudokuLibrary.Model
         public bool Equals(Tablero? other)
         {
             if (other is null) return false;
+            if (other.CeldasConocidas.Count != this.CeldasConocidas.Count) return false;
 
-            for(int i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 for(int j = 0; j < 9; j++)
                 {

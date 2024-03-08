@@ -20,7 +20,8 @@ using System.Text;
 // Tablero hijo = new Tablero(tablero, new Celda(1, 8, 2), 3);
 // Tablero hijo = new Tablero(tablero, new Accion(1, 8, 3));
 
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
+Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_9), null, null);
