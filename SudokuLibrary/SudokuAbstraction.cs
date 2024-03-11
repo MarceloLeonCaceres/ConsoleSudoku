@@ -133,7 +133,7 @@ namespace SudokuLibrary
                 int[] fila = new int[9];
                 int[] columna = new int[9];
                 int[] grupo = new int[9];
-                for(int k = 0; k < 9; k++)
+                for (int k = 0; k < 9; k++)
                 {
                     fila[k] = matriz[i, k];
                     columna[k] = matriz[k, i];

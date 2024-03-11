@@ -26,7 +26,7 @@ namespace SudokuLibrary.DFS
             foreach(Accion accion in  accionesSiguientes)
             {
                 Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, accion);
-                if (nodoPosible.Tablero.EsValida)
+                if (nodoPosible.Tablero.EsValida && nodoPosible.Tablero.EsViable)
                 {
                     nodosSiguientes.Add(nodoPosible);
                 }

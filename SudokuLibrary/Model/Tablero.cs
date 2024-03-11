@@ -16,6 +16,7 @@ namespace SudokuLibrary.Model
 
         public bool EsValida { get; private set; } = false;
 
+        public bool EsViable { get; set; } = false;
         public bool EsSolucion { get; set; } = false;
         public Tablero()
         {
@@ -32,6 +33,7 @@ namespace SudokuLibrary.Model
             SetPendientesPorNumero();
             ReducePendientes();
             SetCeldasPara();
+            SetViabilidad();
         }
 
         public Tablero(Tablero padre, Accion accion)
@@ -47,6 +49,7 @@ namespace SudokuLibrary.Model
             SetPendientesPorNumero();
             ReducePendientes();
             SetCeldasPara();
+            SetViabilidad();
             EstaResuelta();
         }
 
@@ -61,14 +64,25 @@ namespace SudokuLibrary.Model
             EsValida = esvalida;
         }
 
+        private void SetViabilidad()
+        {
+            for(int i =0; i < 9; i++)
+            {
+                if (Pendientes[i].filas.Count != Pendientes[i].cols.Count || Pendientes[i].filas.Count != Pendientes[i].grupos.Count)
+                {
+                    EsViable = false;
+                    return;
+                }
+                if (Pendientes[i].filas.Count > CeldasPara[i].Count)
+                {
+                    EsViable = false;
+                    return;
+                }
+            }
+            EsViable = true;
+        }
         private void EstaResuelta()
         {
-            ValidaBoard();
-            if(EsValida == false)
-            {
-                EsSolucion = false;
-                return;
-            }
             if (CeldasConocidas.Count < 81)
             {
                 EsSolucion = false;
@@ -77,6 +91,12 @@ namespace SudokuLibrary.Model
             else
             {
                 EsSolucion = true;
+            }
+            ValidaBoard();
+            if(EsValida == false)
+            {
+                EsSolucion = false;
+                return;
             }
         }
 
@@ -204,12 +224,15 @@ namespace SudokuLibrary.Model
                     accionesSiguientes.Add(new Accion(celda, numeroConMayorIndice));
                 }
             }
-            Console.WriteLine("Acciones Siguientes:");
-            foreach(Accion accion in accionesSiguientes)
+            if(accionesSiguientes.Count > 0)
             {
-                Console.WriteLine(accion);
+                Console.WriteLine("Acciones Siguientes:");
+                foreach (Accion accion in accionesSiguientes)
+                {
+                    Console.WriteLine(accion);
+                }
+                Console.WriteLine();
             }
-            Console.WriteLine();
             return accionesSiguientes;
         }
 
