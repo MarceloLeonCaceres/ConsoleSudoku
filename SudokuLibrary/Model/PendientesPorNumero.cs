@@ -21,16 +21,22 @@ namespace SudokuLibrary.Model
             grupos = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
         }
 
-        public void ReducePor(int i, int j)
+        public PendientesPorNumero CopiaPendientes()
         {
-            this.filas.Remove(i);
-            this.cols.Remove(j);
-            this.grupos.Remove(SudokuAbstraction.Cuadro(i, j));
+            PendientesPorNumero copia = new PendientesPorNumero(this.numero);
+            copia.filas = new List<int>(this.filas);
+            copia.cols = new List<int>(this.cols);
+            copia.grupos = new List<int>(this.grupos);
+            return copia;
         }
 
         public void ReducePor(Celda celda)
         {
-            ReducePor(celda.X, celda.Y);
+            // ReducePor(celda.X, celda.Y);
+
+            this.filas.Remove(celda.X);
+            this.cols.Remove(celda.Y);
+            this.grupos.Remove(SudokuAbstraction.Cuadro(celda.X, celda.Y));
         }
 
     }

@@ -10,7 +10,7 @@ namespace SudokuLibrary.Model
 
         public List<PendientesPorNumero> Pendientes = new List<PendientesPorNumero>();
 
-        public List<Celda>[] CeldasPara = new List<Celda>[10];
+        public List<Celda>[] CeldasPara = new List<Celda>[9];
 
         public HashSet<Celda> CeldasConocidas = new HashSet<Celda>();    
 
@@ -41,19 +41,40 @@ namespace SudokuLibrary.Model
             
             this.Board = (int[,])padre.Board.Clone();
             this.Board[accion.Celda.X, accion.Celda.Y] = accion.Numero;
-            this.Pendientes = new List<PendientesPorNumero>(padre.Pendientes);
-            this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
             this.CeldasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
-            //ValidaBoard();
-            //SetCeldasConocidas();
-            this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
-            SetPendientesPorNumero();
-            ReducePendientes();
-            // ReducePendientes(accion.Celda);
-            SetCeldasPara();
-            SetViabilidad();
-            EstaResuelta();
             this.EsValida = padre.EsValida;
+            this.EsViable = padre.EsViable;
+
+            this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
+
+            this.Pendientes = new List<PendientesPorNumero>();
+            // this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
+
+            for (int i = 0; i < 9; i++)
+            {
+                PendientesPorNumero pendientesPorNumero = padre.Pendientes[i].CopiaPendientes();
+                this.Pendientes.Add(pendientesPorNumero);
+
+                this.CeldasPara[i] =  new List<Celda>(padre.CeldasPara[i]);
+            }
+            //SetPendientesPorNumero();
+            //ReducePendientes();
+            //SetCeldasPara();
+
+            ReducePendientes(accion.Celda);
+            if (this.EsViable)
+            {
+                SetViabilidad();
+                EstaResuelta();
+            }
+        }
+
+        private void Copia(Tablero hijo, Tablero padre)
+        {
+            hijo.Board = (int[,])padre.Board.Clone();
+            hijo.CeldasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
+            hijo.EsValida = padre.EsValida;
+            hijo.EsViable = padre.EsViable;
         }
 
         private void ValidaBoard()
@@ -128,6 +149,14 @@ namespace SudokuLibrary.Model
             }
         }
 
+        private void GetPendientesDelPadre()
+        {
+            //for(int i = 0;i <= 9; ++i)
+            //{
+            //    this.Pendientes[i] = this.padre.
+            //}
+        }
+
         private void SetCeldasPara()
         {
             for (int num = 0; num < 9; num++)
@@ -135,6 +164,7 @@ namespace SudokuLibrary.Model
                 CeldasPara[num] = new List<Celda>();
                 foreach (int i in Pendientes[num].filas)
                 {
+                    int contador = 0;
                     foreach (int j in Pendientes[num].cols)
                     {
                         foreach (int k in Pendientes[num].grupos)
@@ -142,8 +172,14 @@ namespace SudokuLibrary.Model
                             if (SudokuAbstraction.Cuadro(i, j) == k && Board[i, j] == 0)
                             {
                                 CeldasPara[num].Add(new Celda(i, j, k));
+                                contador++;
                             }
                         }
+                    }
+                    if (contador == 0)
+                    {
+                        EsViable = false;
+                        return;
                     }
                 }
             }
@@ -171,27 +207,10 @@ namespace SudokuLibrary.Model
         {
 
             List<Accion> accionesSiguientes = new List<Accion>();
-            for (int num = 0; num < 9; num++)
-            {
-                foreach (int k in Pendientes[num].grupos)
-                {
-                    int cuenta = CeldasPara[num].Where(c => c.Z == k).Count();
-                    if (cuenta == 1)
-                    {
-                        Celda celdaUnicaPosible = CeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
-                        Accion siguienteAccion = new Accion(celdaUnicaPosible, num+1);
-                        accionesSiguientes.Add(siguienteAccion);
-                    }
-                }
-            }
-            if(accionesSiguientes.Count > 0)
-            {
-                return accionesSiguientes;
-            }
-
             int menosInstancias = 10;
             int menosCeldasFactibles = 100;
             int numeroConMayorIndice = 0;
+
             for (int num = 0; num < 9; num++)
             {
                 int instanciasPendientesNum = Pendientes[num].filas.Count;
@@ -207,25 +226,38 @@ namespace SudokuLibrary.Model
                     }
                     else // (instanciasPendientesNum == menosInstancias)
                     {
-                        if (countCeldasFactiblesNum < menosCeldasFactibles )
+                        if (countCeldasFactiblesNum < menosCeldasFactibles)
                         {
                             numeroConMayorIndice = num + 1;
                             menosCeldasFactibles = countCeldasFactiblesNum;
                         }
                     }
                 }
+                foreach (int k in Pendientes[num].grupos)
+                {
+                    int cuenta = CeldasPara[num].Where(c => c.Z == k).Count();
+                    if (cuenta == 1)
+                    {
+                        Celda celdaUnicaPosible = CeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
+                        Accion siguienteAccion = new Accion(celdaUnicaPosible, num+1);
+                        accionesSiguientes.Add(siguienteAccion);
+                    }
+                }
+            }
+            if(accionesSiguientes.Count > 0)
+            {
+                return accionesSiguientes;
             }
             if(numeroConMayorIndice == 0)
             {
                 return null;
             }
-            if(accionesSiguientes.Count == 0)
+            
+            foreach(var celda in CeldasPara[numeroConMayorIndice-1])
             {
-                foreach(var celda in CeldasPara[numeroConMayorIndice-1])
-                {
-                    accionesSiguientes.Add(new Accion(celda, numeroConMayorIndice));
-                }
+                accionesSiguientes.Add(new Accion(celda, numeroConMayorIndice));
             }
+            
             if(accionesSiguientes.Count > 0)
             {
                 Console.WriteLine("Acciones Siguientes:");
@@ -248,7 +280,33 @@ namespace SudokuLibrary.Model
         }
         private void ReducePendientes(Celda celda)
         {
-            Pendientes[Board[celda.X, celda.Y] - 1].ReducePor(celda);
+            int indiceNum = Board[celda.X, celda.Y] - 1;
+            this.Pendientes[indiceNum].ReducePor(celda);
+            for (int i = 0; i < 9; i++)
+            {
+                List<Celda> listaParaEliminar = new List<Celda>();
+
+                foreach (Celda potencial in this.CeldasPara[i])
+                {
+                    if (potencial.X == celda.X || potencial.Y == celda.Y || potencial.Z == celda.Z)
+                    {
+                        listaParaEliminar.Add(potencial);
+                    }
+                }
+                foreach(Celda cell in listaParaEliminar)
+                {
+                    this.CeldasPara[i].Remove(cell);
+                }
+
+
+                if (this.Pendientes[i].filas.Count != this.Pendientes[i].cols.Count ||
+                    this.Pendientes[i].filas.Count != this.Pendientes[i].grupos.Count ||
+                    this.Pendientes[i].filas.Count > this.CeldasPara[i].Count)
+                {
+                    this.EsViable = false;
+                    return;
+                }
+            }
         }
 
         public void PrintBoard()
@@ -326,7 +384,7 @@ namespace SudokuLibrary.Model
             {
                 for(int j = 0; j < 9; j++)
                 {
-                    if (Board[i,j] != other.Board[i,j]) return false;
+                    if (this.Board[i,j] != other.Board[i,j]) return false;
                 }
             }
             return true;

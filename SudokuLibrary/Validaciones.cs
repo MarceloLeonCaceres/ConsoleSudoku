@@ -1,4 +1,6 @@
-﻿namespace SudokuLibrary
+﻿using SudokuLibrary.Model;
+
+namespace SudokuLibrary
 {
     public static class Validaciones
     {
@@ -65,21 +67,21 @@
             return dic;
         }
 
-        //public static bool EsFactible(int[,] matriz, (int x, int y) celda, int num)
+        //public static bool EsFactible(int[,] matriz, (int x, int y) paraEliminar, int num)
         //{
-        //    if (matriz[celda.x, celda.y] > 0)
+        //    if (matriz[paraEliminar.x, paraEliminar.y] > 0)
         //    {
         //        return false;
         //    }
-        //    if (Contiene(matriz, SudokuAbstraction.Fila(celda.x), num))
+        //    if (Contiene(matriz, SudokuAbstraction.Fila(paraEliminar.x), num))
         //    {
         //        return false;
         //    }
-        //    if (Contiene(matriz, SudokuAbstraction.Col(celda.y), num))
+        //    if (Contiene(matriz, SudokuAbstraction.Col(paraEliminar.y), num))
         //    {
         //        return false;
         //    }
-        //    if (Contiene(matriz, SudokuAbstraction.Cuadrado(celda.x, celda.y), num))
+        //    if (Contiene(matriz, SudokuAbstraction.Cuadrado(paraEliminar.x, paraEliminar.y), num))
         //    {
         //        return false;
         //    }
@@ -120,5 +122,16 @@
         //    }
         //    return true;
         //}
+
+        public static void Descarta(List<Celda> celdas, Celda paraEliminar)
+        {
+            foreach (Celda celda in celdas)
+            {
+                if(celda.X == paraEliminar.X || celda.Y == paraEliminar.Y || celda.Z == paraEliminar.Z)
+                {
+                    celdas.Remove(celda);
+                }
+            }
+        }
     }
 }
