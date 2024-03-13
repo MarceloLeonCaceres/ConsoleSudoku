@@ -138,18 +138,19 @@ namespace SudokuLibrary
                     fila[k] = matriz[i, k];
                     columna[k] = matriz[k, i];
                 }
-                int zAux = 0;
-                for (int filaAux = 0; filaAux < 9; filaAux++)
-                {
-                    for (int colAux = 0; colAux < 9; colAux++)
-                    {
-                        if (Cuadro(filaAux, colAux) == i)
-                        {
-                            grupo[zAux] = matriz[filaAux, colAux];
-                            zAux++;
-                        }
-                    }
-                }
+                grupo = VectorGrupo(matriz, i);
+                //int zAux = 0;
+                //for (int filaAux = 0; filaAux < 9; filaAux++)
+                //{
+                //    for (int colAux = 0; colAux < 9; colAux++)
+                //    {
+                //        if (Cuadro(filaAux, colAux) == i)
+                //        {
+                //            grupo[zAux] = matriz[filaAux, colAux];
+                //            zAux++;
+                //        }
+                //    }
+                //}
                 if (EsSubGrupoValido(fila) == false || EsSubGrupoValido(columna) == false || EsSubGrupoValido(grupo) == false)
                 {
                     return false;
@@ -169,6 +170,124 @@ namespace SudokuLibrary
                 }
             }
             return true;
+        }
+
+        public static int[] VectorGrupo(int[,] matriz, int numeroGrupo)
+        {
+            int[] vector = new int[9];
+            switch (numeroGrupo)
+            {
+                case 0:
+                    vector[0] = matriz[0, 0];
+                    vector[1] = matriz[0, 1];
+                    vector[2] = matriz[0, 2];
+                    vector[3] = matriz[1, 0];
+                    vector[4] = matriz[1, 1];
+                    vector[5] = matriz[1, 2];
+                    vector[6] = matriz[2, 0];
+                    vector[7] = matriz[2, 1];
+                    vector[8] = matriz[2, 2];
+                    return vector;
+
+                case 1:
+                    vector[0] = matriz[0, 3];
+                    vector[1] = matriz[0, 4];
+                    vector[2] = matriz[0, 5];
+                    vector[3] = matriz[1, 3];
+                    vector[4] = matriz[1, 4];
+                    vector[5] = matriz[1, 5];
+                    vector[6] = matriz[2, 3];
+                    vector[7] = matriz[2, 4];
+                    vector[8] = matriz[2, 5];
+                    return vector;
+
+                case 2:
+                    vector[0] = matriz[0, 6];
+                    vector[1] = matriz[0, 7];
+                    vector[2] = matriz[0, 8];
+                    vector[3] = matriz[1, 6];
+                    vector[4] = matriz[1, 7];
+                    vector[5] = matriz[1, 8];
+                    vector[6] = matriz[2, 6];
+                    vector[7] = matriz[2, 7];
+                    vector[8] = matriz[2, 8];
+                    return vector;
+
+                case 3:
+                    vector[0] = matriz[3, 0];
+                    vector[1] = matriz[3, 1];
+                    vector[2] = matriz[3, 2];
+                    vector[3] = matriz[4, 0];
+                    vector[4] = matriz[4, 1];
+                    vector[5] = matriz[4, 2];
+                    vector[6] = matriz[5, 0];
+                    vector[7] = matriz[5, 1];
+                    vector[8] = matriz[5, 2];
+                    return vector;
+
+                case 4:
+                    vector[0] = matriz[3, 3];
+                    vector[1] = matriz[3, 4];
+                    vector[2] = matriz[3, 5];
+                    vector[3] = matriz[4, 3];
+                    vector[4] = matriz[4, 4];
+                    vector[5] = matriz[4, 5];
+                    vector[6] = matriz[5, 3];
+                    vector[7] = matriz[5, 4];
+                    vector[8] = matriz[5, 5];
+                    return vector;
+
+                case 5:
+                    vector[0] = matriz[3, 6];
+                    vector[1] = matriz[3, 7];
+                    vector[2] = matriz[3, 8];
+                    vector[3] = matriz[4, 6];
+                    vector[4] = matriz[4, 7];
+                    vector[5] = matriz[4, 8];
+                    vector[6] = matriz[5, 6];
+                    vector[7] = matriz[5, 7];
+                    vector[8] = matriz[5, 8];
+                    return vector;
+
+                case 6:
+                    vector[0] = matriz[6, 0];
+                    vector[1] = matriz[6, 1];
+                    vector[2] = matriz[6, 2];
+                    vector[3] = matriz[7, 0];
+                    vector[4] = matriz[7, 1];
+                    vector[5] = matriz[7, 2];
+                    vector[6] = matriz[8, 0];
+                    vector[7] = matriz[8, 1];
+                    vector[8] = matriz[8, 2];
+                    return vector;
+
+                case 7:
+                    vector[0] = matriz[6, 3];
+                    vector[1] = matriz[6, 4];
+                    vector[2] = matriz[6, 5];
+                    vector[3] = matriz[7, 3];
+                    vector[4] = matriz[7, 4];
+                    vector[5] = matriz[7, 5];
+                    vector[6] = matriz[8, 3];
+                    vector[7] = matriz[8, 4];
+                    vector[8] = matriz[8, 5];
+                    return vector;
+
+                case 8:
+                    vector[0] = matriz[6, 6];
+                    vector[1] = matriz[6, 7];
+                    vector[2] = matriz[6, 8];
+                    vector[3] = matriz[7, 6];
+                    vector[4] = matriz[7, 7];
+                    vector[5] = matriz[7, 8];
+                    vector[6] = matriz[8, 6];
+                    vector[7] = matriz[8, 7];
+                    vector[8] = matriz[8, 8];
+                    return vector;
+                default:
+                    return vector;
+
+            }
         }
     }
 }

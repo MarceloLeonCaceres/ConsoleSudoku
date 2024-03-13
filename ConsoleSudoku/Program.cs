@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 
 
+//Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), null, null);
@@ -16,7 +17,10 @@ using System.Text;
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_Sin_Solucion), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MIA_1), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM), null, null);
+Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EXPERT), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MIA_1), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_9), null, null);
@@ -64,7 +68,6 @@ while (frontera.Count > 0)
         Console.WriteLine($"Acciones: {acciones.Count}");
         Console.WriteLine("Solucion:");
 
-
         foreach (Accion accion in acciones)
         {
             Console.WriteLine($"{accion.Celda}  => {accion.Numero}");
@@ -75,21 +78,24 @@ while (frontera.Count > 0)
     else
     {
         visitados.Add(nodoActual);
-        List<Nodo> siguientes = nodoActual.Siguientes();
-        if (siguientes != null)
+        if(nodoActual.Tablero.EsViable)
         {
-            foreach (Nodo nodo in siguientes)
+            List<Nodo> siguientes = nodoActual.Siguientes();
+            if (siguientes != null)
             {
-                if (!frontera.Contains(nodo) && !visitados.Contains(nodo))
+                foreach (Nodo nodo in siguientes)
                 {
-                    frontera.Push(nodo);
-                    //Console.WriteLine("No visitado y no en frontera");
+                    if (!frontera.Contains(nodo) && !visitados.Contains(nodo))
+                    {
+                        frontera.Push(nodo);
+                        //Console.WriteLine("No visitado y no en frontera");
+                    }
+                    //else if (!visitados.Contains(nodo) && !nodo.Tablero.EsViable)
+                    //{
+                    //    //Console.WriteLine("Ya visitado o ya esta en frontera");
+                    //}
+                    //nodo.Print();
                 }
-                //else if (!visitados.Contains(nodo) && !nodo.Tablero.EsViable)
-                //{
-                //    //Console.WriteLine("Ya visitado o ya esta en frontera");
-                //}
-                //nodo.Print();
             }
         }
     }

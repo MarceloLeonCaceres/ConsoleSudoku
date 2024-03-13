@@ -44,42 +44,47 @@ namespace SudokuLibrary.Model
             this.Pendientes = new List<PendientesPorNumero>(padre.Pendientes);
             this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
             this.CeldasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
-            ValidaBoard();
-            SetCeldasConocidas();
+            //ValidaBoard();
+            //SetCeldasConocidas();
+            this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
             SetPendientesPorNumero();
             ReducePendientes();
+            // ReducePendientes(accion.Celda);
             SetCeldasPara();
             SetViabilidad();
             EstaResuelta();
+            this.EsValida = padre.EsValida;
         }
 
         private void ValidaBoard()
         {
             bool esvalida = SudokuAbstraction.Valida(Board);
-            if(!esvalida)
+            if (!esvalida)
             {
                 Console.WriteLine("Esta matriz no es valida");
                 Console.WriteLine();
             }
             EsValida = esvalida;
+            //EsValida = true;
         }
 
         private void SetViabilidad()
         {
             for(int i =0; i < 9; i++)
             {
-                if (Pendientes[i].filas.Count != Pendientes[i].cols.Count || Pendientes[i].filas.Count != Pendientes[i].grupos.Count)
+                if (Pendientes[i].filas.Count != Pendientes[i].cols.Count || 
+                    Pendientes[i].filas.Count != Pendientes[i].grupos.Count ||
+                    Pendientes[i].filas.Count > CeldasPara[i].Count )
                 {
-                    EsViable = false;
+                    this.EsViable = false;
                     return;
                 }
-                if (Pendientes[i].filas.Count > CeldasPara[i].Count)
-                {
-                    EsViable = false;
-                    return;
-                }
+                //else if(Pendientes[i].filas.Count == CeldasPara[i].Count)
+                //{
+
+                //}
             }
-            EsViable = true;
+            this.EsViable = true;
         }
         private void EstaResuelta()
         {
@@ -92,12 +97,12 @@ namespace SudokuLibrary.Model
             {
                 EsSolucion = true;
             }
-            ValidaBoard();
-            if(EsValida == false)
-            {
-                EsSolucion = false;
-                return;
-            }
+            //ValidaBoard();
+            //if(EsValida == false)
+            //{
+            //    EsSolucion = false;
+            //    return;
+            //}
         }
 
         private void SetCeldasConocidas()
@@ -134,13 +139,9 @@ namespace SudokuLibrary.Model
                     {
                         foreach (int k in Pendientes[num].grupos)
                         {
-                            if (SudokuAbstraction.Cuadro(i, j) == k)
+                            if (SudokuAbstraction.Cuadro(i, j) == k && Board[i, j] == 0)
                             {
-                                Celda posible = new Celda(i, j, k);
-                                if (Board[i, j] == 0)
-                                {
-                                    CeldasPara[num].Add(posible);
-                                }
+                                CeldasPara[num].Add(new Celda(i, j, k));
                             }
                         }
                     }
@@ -168,6 +169,7 @@ namespace SudokuLibrary.Model
 
         public List<Accion>? AccionesSiguientes()
         {
+
             List<Accion> accionesSiguientes = new List<Accion>();
             for (int num = 0; num < 9; num++)
             {
@@ -243,6 +245,10 @@ namespace SudokuLibrary.Model
             {
                 Pendientes[Board[celda.X, celda.Y] - 1].ReducePor(celda);
             }
+        }
+        private void ReducePendientes(Celda celda)
+        {
+            Pendientes[Board[celda.X, celda.Y] - 1].ReducePor(celda);
         }
 
         public void PrintBoard()
