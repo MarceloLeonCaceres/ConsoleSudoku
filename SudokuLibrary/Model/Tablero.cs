@@ -16,7 +16,7 @@ namespace SudokuLibrary.Model
 
         public bool EsValida { get; private set; } = false;
 
-        public bool EsViable { get; set; } = false;
+        public bool EsViable { get; set; } = true;
         public bool EsSolucion { get; set; } = false;
         public Tablero()
         {
@@ -32,8 +32,11 @@ namespace SudokuLibrary.Model
             SetCeldasConocidas();
             SetPendientesPorNumero();
             ReducePendientes();
-            SetCeldasPara();
-            SetViabilidad();
+            SetCeldasPara(); 
+            if (this.EsViable)
+            {
+                SetViabilidad();
+            }
         }
 
         public Tablero(Tablero padre, Accion accion)
@@ -367,6 +370,8 @@ namespace SudokuLibrary.Model
                     this.Pendientes[i].filas.Count > this.CeldasPara[i].Count)
                 {
                     this.EsViable = false;
+                    this.EsValida = false;
+                    return;
                 }
             }
         }
