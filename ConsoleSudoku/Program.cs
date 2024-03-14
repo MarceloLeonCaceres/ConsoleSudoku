@@ -7,9 +7,9 @@ using System.Text;
 
 
 //Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
-//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);
+Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9), null, null);
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_INTERMEDIA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_8_y_9), null, null);
@@ -18,11 +18,11 @@ Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), nul
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_H_0), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EASY), null, null);
-// Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM_2), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD_2), null, null);
-// Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EXPERT), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EXPERT), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MIA_1), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA), null, null);

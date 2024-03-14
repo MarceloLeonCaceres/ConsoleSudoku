@@ -48,20 +48,22 @@ namespace SudokuLibrary.Model
             this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
 
             this.Pendientes = new List<PendientesPorNumero>();
-            // this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
+            this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
+
+            SetPendientesPorNumero();
+            ReducePendientes();
 
             for (int i = 0; i < 9; i++)
             {
                 PendientesPorNumero pendientesPorNumero = padre.Pendientes[i].CopiaPendientes();
                 this.Pendientes.Add(pendientesPorNumero);
 
-                this.CeldasPara[i] =  new List<Celda>(padre.CeldasPara[i]);
+                this.CeldasPara[i] = new List<Celda>(padre.CeldasPara[i]);
             }
-            //SetPendientesPorNumero();
-            //ReducePendientes();
+            ReducePendientes(accion.Celda);
+
             //SetCeldasPara();
 
-            ReducePendientes(accion.Celda);
             if (this.EsViable)
             {
                 SetViabilidad();
@@ -182,8 +184,68 @@ namespace SudokuLibrary.Model
                         return;
                     }
                 }
+                foreach(int fila in Pendientes[num].filas)
+                {
+                    if (TieneAlgunaCelda(CeldasPara[num], "row", fila) == false)
+                    {
+                        this.EsViable = false;
+                        return;
+                    }
+                }
+                foreach(int col in Pendientes[num].cols)
+                {
+                    if (TieneAlgunaCelda(CeldasPara[num], "col", col) == false)
+                    {
+                        this.EsViable = false;
+                        return;
+                    }
+                }
+                foreach(int z in Pendientes[num].grupos)
+                {
+                    if (TieneAlgunaCelda(CeldasPara[num], "grupo", z) == false)
+                    {
+                        this.EsViable = false;
+                        return;
+                    }
+                }
             }
         }
+
+        private bool TieneAlgunaCelda(List<Celda> paraNums, string rowColZ, int numRowColZ)
+        {
+            if(rowColZ == "row")
+            {
+                foreach(Celda celda in paraNums)
+                {
+                    if(celda.X == numRowColZ)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else if(rowColZ == "col")
+            {
+                foreach (Celda celda in paraNums)
+                {
+                    if (celda.Y == numRowColZ)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Celda celda in paraNums)
+                {
+                    if (celda.Z == numRowColZ)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        
 
         public void DetectCeldasUnicas()
         {
@@ -282,29 +344,29 @@ namespace SudokuLibrary.Model
         {
             int indiceNum = Board[celda.X, celda.Y] - 1;
             this.Pendientes[indiceNum].ReducePor(celda);
+
+            List<Celda> listaParaEliminar = new List<Celda>();
+            foreach (Celda potencial in this.CeldasPara[indiceNum])
+            {
+                if (potencial.X == celda.X || potencial.Y == celda.Y || potencial.Z == celda.Z)
+                {
+                    listaParaEliminar.Add(potencial);
+                }
+            }
+            foreach (Celda cell in listaParaEliminar)
+            {
+                this.CeldasPara[indiceNum].Remove(cell);
+            }
+
             for (int i = 0; i < 9; i++)
             {
-                List<Celda> listaParaEliminar = new List<Celda>();
-
-                foreach (Celda potencial in this.CeldasPara[i])
-                {
-                    if (potencial.X == celda.X || potencial.Y == celda.Y || potencial.Z == celda.Z)
-                    {
-                        listaParaEliminar.Add(potencial);
-                    }
-                }
-                foreach(Celda cell in listaParaEliminar)
-                {
-                    this.CeldasPara[i].Remove(cell);
-                }
-
+                this.CeldasPara[i].Remove(celda);
 
                 if (this.Pendientes[i].filas.Count != this.Pendientes[i].cols.Count ||
                     this.Pendientes[i].filas.Count != this.Pendientes[i].grupos.Count ||
                     this.Pendientes[i].filas.Count > this.CeldasPara[i].Count)
                 {
                     this.EsViable = false;
-                    return;
                 }
             }
         }
@@ -376,9 +438,9 @@ namespace SudokuLibrary.Model
 
         public bool Equals(Tablero? other)
         {
-            if (other is null) return false;
+            //if (other is null) return false;
 
-            if(this.CeldasConocidas.Count != other.CeldasConocidas.Count) return false;
+            //if(this.CeldasConocidas.Count != other.CeldasConocidas.Count) return false;
 
             for (int i = 0; i < 9; i++)
             {

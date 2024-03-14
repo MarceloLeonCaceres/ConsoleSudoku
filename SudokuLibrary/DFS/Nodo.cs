@@ -19,16 +19,15 @@ namespace SudokuLibrary.DFS
         {
             List<Nodo> nodosSiguientes = new List<Nodo>();
             List<Accion> accionesSiguientes = Tablero.AccionesSiguientes();
-            if(accionesSiguientes == null)
+            if(accionesSiguientes != null && accionesSiguientes.Count > 0)
             {
-                return null;
-            }
-            foreach(Accion accion in  accionesSiguientes)
-            {
-                Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, accion);
-                if (nodoPosible.Tablero.EsValida && nodoPosible.Tablero.EsViable)
+                foreach (Accion accion in accionesSiguientes)
                 {
-                    nodosSiguientes.Add(nodoPosible);
+                    Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, accion);
+                    if (nodoPosible.Tablero.EsValida && nodoPosible.Tablero.EsViable)
+                    {
+                        nodosSiguientes.Add(nodoPosible);
+                    }
                 }
             }
             return nodosSiguientes;
@@ -42,7 +41,7 @@ namespace SudokuLibrary.DFS
 
         public bool Equals(Nodo? other)
         {
-            if(other is null) { return false; }
+            //if(other is null) { return false; }
 
             if (other.Tablero.CeldasConocidas.Count != this.Tablero.CeldasConocidas.Count) return false;
 
@@ -51,15 +50,18 @@ namespace SudokuLibrary.DFS
 
         public static bool operator==(Nodo? nodoIzquierda, Nodo? nodoDerecha)
         {
-            if(nodoIzquierda is null)
-            {
-                if(nodoDerecha is null)
-                {
-                    return true;
-                }
-                // Solo el lado izquierdo es null
+            if (nodoIzquierda.Tablero.CeldasConocidas.Count != nodoDerecha.Tablero.CeldasConocidas.Count)
                 return false;
-            }
+
+            //if(nodoIzquierda is null)
+            //{
+            //    if(nodoDerecha is null)
+            //    {
+            //        return true;
+            //    }
+            //    // Solo el lado izquierdo es null
+            //    return false;
+            //}
             // Equals maneja el caso en que la derecha es null
             return nodoIzquierda.Equals(nodoDerecha);
         }
