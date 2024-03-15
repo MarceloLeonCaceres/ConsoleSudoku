@@ -1,6 +1,6 @@
 You can enter the sudoku puzzle in the Matrices file, the format is the following:
 
-public static int[,] DE_INTERNET_MEDIUM = 
+public static int[,] MY_CUSTOM_SUDOKU_PUZZLE = 
 {
 <br>    {0, 6, 0, 9, 0, 4, 0, 0, 1 },
 <br>    {1, 8, 3, 0, 5, 7, 6, 4, 0 },
