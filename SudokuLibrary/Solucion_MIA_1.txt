@@ -1,0 +1,50 @@
+﻿Solución Matrices.MATRIZ_MIA_1
+
+Visitados: 2239781
+En Frontera: 119
+Acciones: 44
+Solucion:
+Celda { X = 1, Y = 5, Z = 1 }  => 7
+Celda { X = 1, Y = 4, Z = 1 }  => 9
+Celda { X = 8, Y = 5, Z = 7 }  => 9
+Celda { X = 0, Y = 7, Z = 2 }  => 7
+Celda { X = 8, Y = 7, Z = 8 }  => 1
+Celda { X = 6, Y = 7, Z = 8 }  => 6
+Celda { X = 2, Y = 8, Z = 2 }  => 6
+Celda { X = 7, Y = 0, Z = 6 }  => 1
+Celda { X = 6, Y = 0, Z = 6 }  => 2
+Celda { X = 1, Y = 6, Z = 2 }  => 1
+Celda { X = 0, Y = 1, Z = 0 }  => 1
+Celda { X = 8, Y = 6, Z = 8 }  => 2
+Celda { X = 7, Y = 4, Z = 7 }  => 2
+Celda { X = 8, Y = 4, Z = 7 }  => 5
+Celda { X = 7, Y = 1, Z = 6 }  => 5
+Celda { X = 5, Y = 7, Z = 5 }  => 2
+Celda { X = 4, Y = 5, Z = 4 }  => 2
+Celda { X = 4, Y = 3, Z = 4 }  => 5
+Celda { X = 3, Y = 3, Z = 4 }  => 6
+Celda { X = 5, Y = 3, Z = 4 }  => 9
+Celda { X = 0, Y = 4, Z = 1 }  => 6
+Celda { X = 0, Y = 5, Z = 1 }  => 5
+Celda { X = 2, Y = 6, Z = 2 }  => 5
+Celda { X = 2, Y = 7, Z = 2 }  => 9
+Celda { X = 7, Y = 8, Z = 8 }  => 9
+Celda { X = 4, Y = 6, Z = 5 }  => 9
+Celda { X = 3, Y = 1, Z = 3 }  => 9
+Celda { X = 6, Y = 2, Z = 6 }  => 9
+Celda { X = 7, Y = 7, Z = 8 }  => 8
+Celda { X = 6, Y = 1, Z = 6 }  => 8
+Celda { X = 0, Y = 6, Z = 2 }  => 8
+Celda { X = 1, Y = 0, Z = 0 }  => 8
+Celda { X = 4, Y = 2, Z = 3 }  => 8
+Celda { X = 5, Y = 8, Z = 5 }  => 8
+Celda { X = 4, Y = 0, Z = 3 }  => 6
+Celda { X = 1, Y = 1, Z = 0 }  => 6
+Celda { X = 8, Y = 2, Z = 6 }  => 6
+Celda { X = 8, Y = 1, Z = 6 }  => 4
+Celda { X = 4, Y = 8, Z = 5 }  => 4
+Celda { X = 5, Y = 5, Z = 4 }  => 4
+Celda { X = 3, Y = 0, Z = 3 }  => 4
+Celda { X = 1, Y = 7, Z = 2 }  => 4
+Celda { X = 0, Y = 3, Z = 1 }  => 4
+Celda { X = 2, Y = 2, Z = 0 }  => 4
