@@ -139,18 +139,6 @@ namespace SudokuLibrary
                     columna[k] = matriz[k, i];
                 }
                 grupo = VectorGrupo(matriz, i);
-                //int zAux = 0;
-                //for (int filaAux = 0; filaAux < 9; filaAux++)
-                //{
-                //    for (int colAux = 0; colAux < 9; colAux++)
-                //    {
-                //        if (Cuadro(filaAux, colAux) == i)
-                //        {
-                //            grupo[zAux] = matriz[filaAux, colAux];
-                //            zAux++;
-                //        }
-                //    }
-                //}
                 if (EsSubGrupoValido(fila) == false || EsSubGrupoValido(columna) == false || EsSubGrupoValido(grupo) == false)
                 {
                     return false;

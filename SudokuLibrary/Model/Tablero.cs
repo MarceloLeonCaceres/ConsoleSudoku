@@ -53,9 +53,6 @@ namespace SudokuLibrary.Model
             this.Pendientes = new List<PendientesPorNumero>();
             this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
 
-            //SetPendientesPorNumero();
-            //ReducePendientes();
-
             for (int i = 0; i < 9; i++)
             {
                 PendientesPorNumero pendientesPorNumero = padre.Pendientes[i].CopiaPendientes();
@@ -64,8 +61,6 @@ namespace SudokuLibrary.Model
                 this.CeldasPara[i] = new List<Celda>(padre.CeldasPara[i]);
             }
             ReducePendientes(accion.Celda);
-
-            //SetCeldasPara();
 
             if (this.EsViable)
             {
@@ -91,7 +86,6 @@ namespace SudokuLibrary.Model
                 Console.WriteLine();
             }
             EsValida = esvalida;
-            //EsValida = true;
         }
 
         private void SetViabilidad()
@@ -105,10 +99,6 @@ namespace SudokuLibrary.Model
                     this.EsViable = false;
                     return;
                 }
-                //else if(Pendientes[i].filas.Count == CeldasPara[i].Count)
-                //{
-
-                //}
             }
             this.EsViable = true;
         }
@@ -123,12 +113,6 @@ namespace SudokuLibrary.Model
             {
                 EsSolucion = true;
             }
-            //ValidaBoard();
-            //if(EsValida == false)
-            //{
-            //    EsSolucion = false;
-            //    return;
-            //}
         }
 
         private void SetCeldasConocidas()
@@ -152,14 +136,6 @@ namespace SudokuLibrary.Model
             {
                 Pendientes.Add(new PendientesPorNumero(i));
             }
-        }
-
-        private void GetPendientesDelPadre()
-        {
-            //for(int i = 0;i <= 9; ++i)
-            //{
-            //    this.Pendientes[i] = this.padre.
-            //}
         }
 
         private void SetCeldasPara()
@@ -443,10 +419,6 @@ namespace SudokuLibrary.Model
 
         public bool Equals(Tablero? other)
         {
-            //if (other is null) return false;
-
-            //if(this.CeldasConocidas.Count != other.CeldasConocidas.Count) return false;
-
             for (int i = 0; i < 9; i++)
             {
                 for(int j = 0; j < 9; j++)

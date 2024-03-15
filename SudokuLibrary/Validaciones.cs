@@ -67,62 +67,6 @@ namespace SudokuLibrary
             return dic;
         }
 
-        //public static bool EsFactible(int[,] matriz, (int x, int y) paraEliminar, int num)
-        //{
-        //    if (matriz[paraEliminar.x, paraEliminar.y] > 0)
-        //    {
-        //        return false;
-        //    }
-        //    if (Contiene(matriz, SudokuAbstraction.Fila(paraEliminar.x), num))
-        //    {
-        //        return false;
-        //    }
-        //    if (Contiene(matriz, SudokuAbstraction.Col(paraEliminar.y), num))
-        //    {
-        //        return false;
-        //    }
-        //    if (Contiene(matriz, SudokuAbstraction.Cuadrado(paraEliminar.x, paraEliminar.y), num))
-        //    {
-        //        return false;
-        //    }
-        //    return true;
-        //}
-        //public static bool EsValida(int[,] matriz)
-        //{
-        //    var celdasConocidasPorNumero = Solver.CeldasConocidasPorNumero;
-        //    for(int numero = 1; numero <= 9; numero++)
-        //    {
-        //        int n = celdasConocidasPorNumero[numero].Count;
-        //        if (n > 9)
-        //        {
-        //            return false;
-        //        }
-        //        if (n >= 2)
-        //        {
-        //            for(int i = 0; i < n -1; i++)
-        //            {
-        //                for(int j = i+1; j < n; j++)
-        //                {
-        //                    if (celdasConocidasPorNumero[numero][i].x == celdasConocidasPorNumero[numero][j].x)
-        //                    {
-        //                        return false;
-        //                    }
-        //                    if (celdasConocidasPorNumero[numero][i].y == celdasConocidasPorNumero[numero][j].y)
-        //                    {
-        //                        return false;
-        //                    }
-        //                    if (SudokuAbstraction.Cuadro(celdasConocidasPorNumero[numero][i].x, celdasConocidasPorNumero[numero][i].y) 
-        //                        == SudokuAbstraction.Cuadro(celdasConocidasPorNumero[numero][j].x, celdasConocidasPorNumero[numero][j].y ))
-        //                    {
-        //                        return false;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
-
         public static void Descarta(List<Celda> celdas, Celda paraEliminar)
         {
             foreach (Celda celda in celdas)
