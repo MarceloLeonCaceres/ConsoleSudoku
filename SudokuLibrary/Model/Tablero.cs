@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SudokuLibrary.Model
 {
-    public class Tablero : IEquatable<Tablero>
+    public class Tablero : IEquatable<Tablero>, IComparable<Tablero>
     {
         public int[,] Board { get; set; }
 
@@ -53,8 +53,8 @@ namespace SudokuLibrary.Model
             this.Pendientes = new List<PendientesPorNumero>();
             this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
 
-            SetPendientesPorNumero();
-            ReducePendientes();
+            //SetPendientesPorNumero();
+            //ReducePendientes();
 
             for (int i = 0; i < 9; i++)
             {
@@ -455,6 +455,34 @@ namespace SudokuLibrary.Model
                 }
             }
             return true;
+        }
+
+        public int CompareTo(Tablero? other)
+        {
+            if(this.CeldasConocidas.Count < other.CeldasConocidas.Count)
+            {
+                return -1;
+            }
+            else if (this.CeldasConocidas.Count > other.CeldasConocidas.Count)
+            {
+                return 1;
+            }
+            for(int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
+                {
+                    if (this.Board[i, j] < other.Board[i, j])
+                    {
+                        return -1;
+
+                    }
+                    else if (this.Board[i, j] > other.Board[i, j])
+                    {
+                        return 1;
+                    }
+                }
+            }
+            return 0;
         }
 
         public static bool operator==(Tablero? leftTablero, Tablero? rightTablero)

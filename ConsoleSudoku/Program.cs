@@ -7,7 +7,7 @@ using System.Text;
 
 
 //Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_INTERMEDIA), null, null);
@@ -21,7 +21,7 @@ Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9),
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM_2), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD), null, null);
-//Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD_2), null, null);
+Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD_2), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EXPERT), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MIA_1), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
@@ -31,7 +31,10 @@ Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9),
 
 Stack<Nodo> frontera = new Stack<Nodo>();
 List<Nodo> visitados = new List<Nodo>();
-List<Tablero> tablerosVistos = new List<Tablero>();
+
+//SortedDictionary<int[,], Nodo> dicVisitados = new SortedDictionary<int[,], Nodo>();
+SortedDictionary<Tablero, Nodo> dicVisitados = new SortedDictionary<Tablero, Nodo>();
+
 Nodo nodoActual;
 List<Accion> acciones;
 
@@ -55,7 +58,8 @@ while (frontera.Count > 0)
         while(nodoActual.Padre is not null)
         {
             acciones.Add(nodoActual.Accion);
-            nodoActual = visitados.Find(n => n.Tablero == nodoActual.Padre);
+            //nodoActual = visitados.Find(n => n.Tablero == nodoActual.Padre);
+            nodoActual = dicVisitados[nodoActual.Padre];
         }
         acciones.Reverse();
         PrintAcciones();
@@ -63,7 +67,8 @@ while (frontera.Count > 0)
     }
     else
     {
-        visitados.Add(nodoActual);
+        //visitados.Add(nodoActual);
+        dicVisitados[nodoActual.Tablero] = nodoActual;
         if(nodoActual.Tablero.EsViable)
         {
             List<Nodo> siguientes = nodoActual.Siguientes();
@@ -71,16 +76,11 @@ while (frontera.Count > 0)
             {
                 foreach (Nodo nodo in siguientes)
                 {
-                    if (!frontera.Contains(nodo) && !visitados.Contains(nodo))
+                    //if (!frontera.Contains(nodo) && !visitados.Contains(nodo))
+                    if (!frontera.Contains(nodo) && !dicVisitados.ContainsKey(nodo.Tablero))
                     {
                         frontera.Push(nodo);
-                        //Console.WriteLine("No visitado y no en frontera");
                     }
-                    //else if (!visitados.Contains(nodo) && !nodo.Tablero.EsViable)
-                    //{
-                    //    //Console.WriteLine("Ya visitado o ya esta en frontera");
-                    //}
-                    //nodo.Print();
                 }
             }
         }
@@ -114,7 +114,7 @@ void PrintSolucion()
 
 void PrintAcciones()
 {
-    Console.WriteLine($"Visitados: {visitados.Count}");
+    Console.WriteLine($"Visitados: {dicVisitados.Count}");
     Console.WriteLine($"En Frontera: {frontera.Count}");
     Console.WriteLine($"Acciones: {acciones.Count}");
     Console.WriteLine("Solucion:");
