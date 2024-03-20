@@ -7,23 +7,13 @@ namespace SudokuLibrary.Model
     public class Tablero : IEquatable<Tablero>, IComparable<Tablero>
     {
         public int[,] Board { get; set; }
-
-        public List<PendientesPorNumero> Pendientes = new List<PendientesPorNumero>();
-
-        public List<Celda>[] CeldasPara = new List<Celda>[9];
-
-        public HashSet<Celda> CeldasConocidas = new HashSet<Celda>();    
-
+        public HashSet<Celda> CeldasConocidas { get; set; }
+        public Dictionary<int, PendientesByNumber> DicPendientes { get; set; }
+        public Dictionary<int, List<Celda>> DicCeldasPara { get; set; }
         public bool EsValida { get; private set; } = false;
-
         public bool EsViable { get; set; } = true;
         public bool EsSolucion { get; set; } = false;
-        public Tablero()
-        {
-            Board = new int[9, 9];
-            SetPendientesPorNumero();
-            SetCeldasPara();
-        }
+
 
         public Tablero(int[,] matriz)
         {
@@ -32,10 +22,10 @@ namespace SudokuLibrary.Model
             SetCeldasConocidas();
             SetPendientesPorNumero();
             ReducePendientes();
-            SetCeldasPara(); 
+            SetCeldasPara_De_DicPendientes();
             if (this.EsViable)
             {
-                SetViabilidad();
+                SetDicViabilidad();
             }
         }
 
@@ -49,32 +39,25 @@ namespace SudokuLibrary.Model
             this.EsViable = padre.EsViable;
 
             this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
-
-            this.Pendientes = new List<PendientesPorNumero>();
-            this.CeldasPara = (List<Celda>[])padre.CeldasPara.Clone();
-
-            for (int i = 0; i < 9; i++)
+          
+            this.DicCeldasPara = new Dictionary<int, List<Celda>>();
+            foreach(int num in padre.DicCeldasPara.Keys)
             {
-                PendientesPorNumero pendientesPorNumero = padre.Pendientes[i].CopiaPendientes();
-                this.Pendientes.Add(pendientesPorNumero);
-
-                this.CeldasPara[i] = new List<Celda>(padre.CeldasPara[i]);
+                this.DicCeldasPara[num] = new List<Celda>(padre.DicCeldasPara[num]);
             }
-            ReducePendientes(accion.Celda);
+
+            this.DicPendientes = new Dictionary<int, PendientesByNumber>();
+            foreach (int num in padre.DicPendientes.Keys)
+            {
+                this.DicPendientes[num] = padre.DicPendientes[num].CopyPending();
+            }
+            ReduceDicPendientes(accion.Celda);
 
             if (this.EsViable)
             {
-                SetViabilidad();
+                SetDicViabilidad();
                 EstaResuelta();
             }
-        }
-
-        private void Copia(Tablero hijo, Tablero padre)
-        {
-            hijo.Board = (int[,])padre.Board.Clone();
-            hijo.CeldasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
-            hijo.EsValida = padre.EsValida;
-            hijo.EsViable = padre.EsViable;
         }
 
         private void ValidaBoard()
@@ -88,13 +71,13 @@ namespace SudokuLibrary.Model
             EsValida = esvalida;
         }
 
-        private void SetViabilidad()
+        private void SetDicViabilidad()
         {
-            for(int i =0; i < 9; i++)
+            foreach (int i in DicPendientes.Keys)
             {
-                if (Pendientes[i].filas.Count != Pendientes[i].cols.Count || 
-                    Pendientes[i].filas.Count != Pendientes[i].grupos.Count ||
-                    Pendientes[i].filas.Count > CeldasPara[i].Count )
+                if (DicPendientes[i].filas.Count != DicPendientes[i].cols.Count ||
+                    DicPendientes[i].filas.Count != DicPendientes[i].grupos.Count ||
+                    DicPendientes[i].filas.Count > DicCeldasPara[i].Count)
                 {
                     this.EsViable = false;
                     return;
@@ -102,6 +85,7 @@ namespace SudokuLibrary.Model
             }
             this.EsViable = true;
         }
+
         private void EstaResuelta()
         {
             if (CeldasConocidas.Count < 81)
@@ -117,6 +101,7 @@ namespace SudokuLibrary.Model
 
         private void SetCeldasConocidas()
         {
+            CeldasConocidas = new HashSet<Celda>();
             for (int i = 0; i < 9; ++i)
             {
                 for (int j = 0; j < 9; ++j)
@@ -131,28 +116,29 @@ namespace SudokuLibrary.Model
 
         private void SetPendientesPorNumero()
         {
-            Pendientes = new List<PendientesPorNumero>();
+            DicPendientes = new Dictionary<int, PendientesByNumber>();
             for (int i = 1; i <= 9; ++i)
             {
-                Pendientes.Add(new PendientesPorNumero(i));
+                DicPendientes[i] = new PendientesByNumber();
             }
-        }
+        }        
 
-        private void SetCeldasPara()
+        private void SetCeldasPara_De_DicPendientes()
         {
-            for (int num = 0; num < 9; num++)
+            DicCeldasPara = new Dictionary<int, List<Celda>>();
+            foreach(int num in DicPendientes.Keys)
             {
-                CeldasPara[num] = new List<Celda>();
-                foreach (int i in Pendientes[num].filas)
+                DicCeldasPara[num] = new List<Celda>();
+                foreach (int i in DicPendientes[num].filas)
                 {
                     int contador = 0;
-                    foreach (int j in Pendientes[num].cols)
+                    foreach (int j in DicPendientes[num].cols)
                     {
-                        foreach (int k in Pendientes[num].grupos)
+                        foreach (int k in DicPendientes[num].grupos)
                         {
                             if (SudokuAbstraction.Cuadro(i, j) == k && Board[i, j] == 0)
                             {
-                                CeldasPara[num].Add(new Celda(i, j, k));
+                                DicCeldasPara[num].Add(new Celda(i, j, k));
                                 contador++;
                             }
                         }
@@ -163,25 +149,25 @@ namespace SudokuLibrary.Model
                         return;
                     }
                 }
-                foreach(int fila in Pendientes[num].filas)
+                foreach (int fila in DicPendientes[num].filas)
                 {
-                    if (TieneAlgunaCelda(CeldasPara[num], "row", fila) == false)
+                    if (TieneAlgunaCelda(DicCeldasPara[num], "row", fila) == false)
                     {
                         this.EsViable = false;
                         return;
                     }
                 }
-                foreach(int col in Pendientes[num].cols)
+                foreach (int col in DicPendientes[num].cols)
                 {
-                    if (TieneAlgunaCelda(CeldasPara[num], "col", col) == false)
+                    if (TieneAlgunaCelda(DicCeldasPara[num], "col", col) == false)
                     {
                         this.EsViable = false;
                         return;
                     }
                 }
-                foreach(int z in Pendientes[num].grupos)
+                foreach (int z in DicPendientes[num].grupos)
                 {
-                    if (TieneAlgunaCelda(CeldasPara[num], "grupo", z) == false)
+                    if (TieneAlgunaCelda(DicCeldasPara[num], "grupo", z) == false)
                     {
                         this.EsViable = false;
                         return;
@@ -190,7 +176,7 @@ namespace SudokuLibrary.Model
             }
         }
 
-        private bool TieneAlgunaCelda(List<Celda> paraNums, string rowColZ, int numRowColZ)
+        private static bool TieneAlgunaCelda(List<Celda> paraNums, string rowColZ, int numRowColZ)
         {
             if(rowColZ == "row")
             {
@@ -223,28 +209,9 @@ namespace SudokuLibrary.Model
                 }
             }
             return false;
-        }
-        
+        }        
 
-        public void DetectCeldasUnicas()
-        {
-            for(int num = 0; num < 9; num++)
-            {
-                foreach (int k in Pendientes[num].grupos)
-                {
-                    int cuenta = CeldasPara[num].Where(c => c.Z == k).Count();
-                    if (cuenta == 1)
-                    {
-                        Celda celdaUnicaPosible = CeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
-                        Console.WriteLine($"Hay que poner el numero {num + 1} en la celda {celdaUnicaPosible}");
-                        Console.WriteLine();
-                    }
-
-                }
-            }
-        }
-
-        public List<Accion>? AccionesSiguientes()
+        public List<Accion>? AccionesDicSiguientes()
         {
 
             List<Accion> accionesSiguientes = new List<Accion>();
@@ -252,16 +219,17 @@ namespace SudokuLibrary.Model
             int menosCeldasFactibles = 100;
             int numeroConMayorIndice = 0;
 
-            for (int num = 0; num < 9; num++)
+            //for (int num = 0; num < 9; num++)
+            foreach(int num in DicPendientes.Keys)
             {
-                int instanciasPendientesNum = Pendientes[num].filas.Count;
-                int countCeldasFactiblesNum = CeldasPara[num].Count;
+                int instanciasPendientesNum = DicPendientes[num].filas.Count;
+                int countCeldasFactiblesNum = DicCeldasPara[num].Count;
 
                 if (instanciasPendientesNum > 0 && instanciasPendientesNum <= menosInstancias)
                 {
                     if (instanciasPendientesNum < menosInstancias)
                     {
-                        numeroConMayorIndice = num + 1;
+                        numeroConMayorIndice = num;
                         menosInstancias = instanciasPendientesNum;
                         menosCeldasFactibles = countCeldasFactiblesNum;
                     }
@@ -269,37 +237,37 @@ namespace SudokuLibrary.Model
                     {
                         if (countCeldasFactiblesNum < menosCeldasFactibles)
                         {
-                            numeroConMayorIndice = num + 1;
+                            numeroConMayorIndice = num;
                             menosCeldasFactibles = countCeldasFactiblesNum;
                         }
                     }
                 }
-                foreach (int k in Pendientes[num].grupos)
+                foreach (int k in DicPendientes[num].grupos)
                 {
-                    int cuenta = CeldasPara[num].Where(c => c.Z == k).Count();
+                    int cuenta = DicCeldasPara[num].Where(c => c.Z == k).Count();
                     if (cuenta == 1)
                     {
-                        Celda celdaUnicaPosible = CeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
-                        Accion siguienteAccion = new Accion(celdaUnicaPosible, num+1);
+                        Celda celdaUnicaPosible = DicCeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
+                        Accion siguienteAccion = new Accion(celdaUnicaPosible, num);
                         accionesSiguientes.Add(siguienteAccion);
                     }
                 }
             }
-            if(accionesSiguientes.Count > 0)
+            if (accionesSiguientes.Count > 0)
             {
                 return accionesSiguientes;
             }
-            if(numeroConMayorIndice == 0)
+            if (numeroConMayorIndice == 0)
             {
                 return null;
             }
-            
-            foreach(var celda in CeldasPara[numeroConMayorIndice-1])
+
+            foreach (var celda in DicCeldasPara[numeroConMayorIndice])
             {
                 accionesSiguientes.Add(new Accion(celda, numeroConMayorIndice));
             }
-            
-            if(accionesSiguientes.Count > 0)
+
+            if (accionesSiguientes.Count > 0)
             {
                 Console.WriteLine("Acciones Siguientes:");
                 foreach (Accion accion in accionesSiguientes)
@@ -316,16 +284,30 @@ namespace SudokuLibrary.Model
         {
             foreach (var celda in CeldasConocidas)
             {
-                Pendientes[Board[celda.X, celda.Y] - 1].ReducePor(celda);
+                DicPendientes[Board[celda.X, celda.Y]].ReducePor(celda);
+            }
+            for(int i = 1; i <=9; i++)
+            {
+                if (this.DicPendientes[i].EsValido() == false)
+                {
+                    this.EsViable = false;
+                    this.EsValida = false;
+                    return;
+                }
+                if (this.DicPendientes[i].filas.Count == 0)
+                {
+                    this.DicPendientes.Remove(i);
+                }
             }
         }
-        private void ReducePendientes(Celda celda)
+
+        private void ReduceDicPendientes(Celda celda)
         {
-            int indiceNum = Board[celda.X, celda.Y] - 1;
-            this.Pendientes[indiceNum].ReducePor(celda);
+            int num = Board[celda.X, celda.Y];
+            this.DicPendientes[num].ReducePor(celda);
 
             List<Celda> listaParaEliminar = new List<Celda>();
-            foreach (Celda potencial in this.CeldasPara[indiceNum])
+            foreach (Celda potencial in this.DicCeldasPara[num])
             {
                 if (potencial.X == celda.X || potencial.Y == celda.Y || potencial.Z == celda.Z)
                 {
@@ -334,24 +316,27 @@ namespace SudokuLibrary.Model
             }
             foreach (Celda cell in listaParaEliminar)
             {
-                this.CeldasPara[indiceNum].Remove(cell);
+                this.DicCeldasPara[num].Remove(cell);
             }
 
-            for (int i = 0; i < 9; i++)
+            foreach (int i in DicCeldasPara.Keys)
             {
-                this.CeldasPara[i].Remove(celda);
+                this.DicCeldasPara[i].Remove(celda);
 
-                if (this.Pendientes[i].filas.Count != this.Pendientes[i].cols.Count ||
-                    this.Pendientes[i].filas.Count != this.Pendientes[i].grupos.Count ||
-                    this.Pendientes[i].filas.Count > this.CeldasPara[i].Count)
+                if (this.DicPendientes[i].filas.Count != this.DicPendientes[i].cols.Count ||
+                    this.DicPendientes[i].filas.Count != this.DicPendientes[i].grupos.Count ||
+                    this.DicPendientes[i].filas.Count > this.DicCeldasPara[i].Count)
                 {
                     this.EsViable = false;
                     this.EsValida = false;
                     return;
                 }
             }
-        }
 
+        }
+                
+
+        #region PrintEnConsola
         public void PrintBoard()
         {
             StringBuilder sb = new StringBuilder();
@@ -372,7 +357,7 @@ namespace SudokuLibrary.Model
         {
             for (int i = 0; i < 9; i++)
             {
-                Console.WriteLine($"Pendientes {i + 1}: {string.Join(", ", Pendientes[i].filas)}: \t {string.Join(", ", Pendientes[i].cols)}: \t {string.Join(", ", Pendientes[i].grupos)} ");
+                Console.WriteLine($"Pendientes {i + 1}: {string.Join(", ", DicPendientes[i].filas)}: \t {string.Join(", ", DicPendientes[i].cols)}: \t {string.Join(", ", DicPendientes[i].grupos)} ");
             }
             Console.WriteLine();
         }
@@ -381,7 +366,7 @@ namespace SudokuLibrary.Model
             for (int num = 0; num < 9; num++)
             {
                 Console.WriteLine($"Celdas para el numero {num + 1}:");
-                PrintCeldas(CeldasPara[num]);
+                PrintCeldas(DicCeldasPara[num]);
             }
         }
 
@@ -398,8 +383,8 @@ namespace SudokuLibrary.Model
         {
             for (int num = 0; num < 9; num++)
             {
-                int countCeldasFactibles = CeldasPara[num].Count;
-                int instanciasPendientes = Pendientes[num].filas.Count;
+                int countCeldasFactibles = DicCeldasPara[num].Count;
+                int instanciasPendientes = DicPendientes[num].filas.Count;
                 float indice;
 
                 Console.WriteLine($"Celdas para el numero {num + 1}:");
@@ -416,7 +401,9 @@ namespace SudokuLibrary.Model
                 Console.WriteLine();
             }
         }
+        #endregion
 
+        #region Comparaciones
         public bool Equals(Tablero? other)
         {
             for (int i = 0; i < 9; i++)
@@ -472,5 +459,6 @@ namespace SudokuLibrary.Model
             return leftTablero.Equals(rightTablero);
         }
         public static bool operator !=(Tablero tableroIzquierda, Tablero tableroDerecha) => !(tableroIzquierda == tableroDerecha);
+        #endregion
     }
 }

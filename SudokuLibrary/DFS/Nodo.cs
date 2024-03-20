@@ -17,10 +17,12 @@ namespace SudokuLibrary.DFS
 
         public List<Nodo>? Siguientes()
         {
-            List<Nodo> nodosSiguientes = new List<Nodo>();
-            List<Accion> accionesSiguientes = Tablero.AccionesSiguientes();
-            if(accionesSiguientes != null && accionesSiguientes.Count > 0)
+            //List<Accion> accionesSiguientes = Tablero.AccionesSiguientes();
+            List<Accion> accionesSiguientes = Tablero.AccionesDicSiguientes();
+            
+            if (accionesSiguientes != null && accionesSiguientes.Count > 0)
             {
+                List<Nodo> nodosSiguientes = new List<Nodo>();
                 foreach (Accion accion in accionesSiguientes)
                 {
                     Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, accion);
@@ -29,8 +31,9 @@ namespace SudokuLibrary.DFS
                         nodosSiguientes.Add(nodoPosible);
                     }
                 }
+                return nodosSiguientes;
             }
-            return nodosSiguientes;
+            return null;
         }
 
         public void Print()

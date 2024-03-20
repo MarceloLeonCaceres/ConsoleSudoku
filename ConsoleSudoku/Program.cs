@@ -4,7 +4,8 @@ using SudokuLibrary.DFS;
 using SudokuLibrary.Model;
 
 
-Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
+//Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
+//Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), null, null);
@@ -20,18 +21,18 @@ Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_MEDIUM_2), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_HARD_2), null, null);
-//Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EXPERT), null, null);
+Nodo raiz = new Nodo(new Tablero(Matrices.DE_INTERNET_EXPERT), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MIA_1), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MIA_2), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_NO_VALIDA), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA), null, null);
 // Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_6), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER), null, null);
 
 DateTime inicio = DateTime.Now;
 DateTime fin;
 Stack<Nodo> frontera = new Stack<Nodo>();
-List<Nodo> visitados = new List<Nodo>();
 
 SortedDictionary<Tablero, Nodo> dicVisitados = new SortedDictionary<Tablero, Nodo>();
 
@@ -70,7 +71,7 @@ while (frontera.Count > 0)
         dicVisitados[nodoActual.Tablero] = nodoActual;
         if (nodoActual.Tablero.EsViable)
         {
-            List<Nodo> siguientes = nodoActual.Siguientes();
+            List<Nodo>? siguientes = nodoActual.Siguientes();
             if (siguientes != null)
             {
                 foreach (Nodo nodo in siguientes)
@@ -91,7 +92,7 @@ if (encontroSolucion == false)
     Console.WriteLine("No hubo solucion, se terminaron los elementos de la frontera.");
     Console.WriteLine($"Inicio {inicio.ToLongTimeString()}");
     Console.WriteLine($"Fin {DateTime.Now.ToLongTimeString()}");
-    Console.WriteLine($"Visitados: {visitados.Count}");
+    Console.WriteLine($"Visitados: {dicVisitados.Count}");
     Console.WriteLine($"En Frontera: {frontera.Count}");
 }
 
