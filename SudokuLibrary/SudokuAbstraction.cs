@@ -126,7 +126,7 @@ namespace SudokuLibrary
             }
         }
 
-        public static bool Valida(int[,] matriz)
+        public static bool Valida(byte[,] matriz)
         {
             for (int i = 0; i < 9; i++)
             {
@@ -160,7 +160,7 @@ namespace SudokuLibrary
             return true;
         }
 
-        public static int[] VectorGrupo(int[,] matriz, int numeroGrupo)
+        public static int[] VectorGrupo(byte[,] matriz, int numeroGrupo)
         {
             int[] vector = new int[9];
             switch (numeroGrupo)

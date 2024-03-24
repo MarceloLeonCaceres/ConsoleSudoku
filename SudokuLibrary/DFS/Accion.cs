@@ -5,15 +5,15 @@ namespace SudokuLibrary.DFS
     public record Accion
     {
         public Celda? Celda { get; private set; }
-        public int Numero { get; private set; }
+        public byte Numero { get; private set; }
 
-        public Accion(int X, int Y, int numero)
+        public Accion(byte X, byte Y, byte numero)
         {
             Celda = new Celda(X, Y);
             Numero = numero;
         }
 
-        public Accion(Celda celda, int numero)
+        public Accion(Celda celda, byte numero)
         {
             Celda = celda;
             Numero = numero;

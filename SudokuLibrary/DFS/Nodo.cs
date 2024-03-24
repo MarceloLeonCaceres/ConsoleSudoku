@@ -2,30 +2,55 @@
 
 namespace SudokuLibrary.DFS
 {
-    public class Nodo : IEquatable<Nodo>
+    public class Nodo : IComparable<Nodo>
     {
         public Tablero Tablero { get; set; }
         public Tablero? Padre { get; set; }
-        public Accion? Accion { get; set; }
+        public List<Accion>? Acciones { get; set; }
 
-        public Nodo(Tablero tablero, Tablero padre, Accion accion)
+        public Nodo(Tablero tablero, Tablero padre, List<Accion> acciones)
         {
             Tablero = tablero;
             Padre = padre;
-            Accion = accion;
+            if(acciones == null)
+            {
+                Acciones = null;
+            }
+            else
+            {
+                Acciones = new List<Accion>(acciones);
+            }
         }
+
+        //public Nodo(Tablero tablero, Tablero padre, Accion accion)
+        //{
+        //    Tablero = tablero;
+        //    Padre = padre;
+        //    Acciones = new List<Accion>();
+        //    Acciones.Add(accion);
+        //}
 
         public List<Nodo>? Siguientes()
         {
-            //List<Accion> accionesSiguientes = Tablero.AccionesSiguientes();
-            List<Accion> accionesSiguientes = Tablero.AccionesDicSiguientes();
             
+            var (sonUnicas, accionesSiguientes) = Tablero.AccionesDicSiguientes();
             if (accionesSiguientes != null && accionesSiguientes.Count > 0)
             {
                 List<Nodo> nodosSiguientes = new List<Nodo>();
+                if (sonUnicas)
+                {
+                    Tablero tableroMultiple = new Tablero(Tablero, null);
+                    foreach (Accion accion in accionesSiguientes)
+                    {
+                        tableroMultiple = new Tablero(tableroMultiple, accion);
+                    }
+                    Nodo nodoMultiple = new Nodo(tableroMultiple, Tablero, accionesSiguientes);
+                    nodosSiguientes.Add(nodoMultiple);
+                    return nodosSiguientes;
+                }
                 foreach (Accion accion in accionesSiguientes)
                 {
-                    Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, accion);
+                    Nodo nodoPosible = new Nodo(new Tablero(Tablero, accion), Tablero, new List<Accion> { accion });
                     if (nodoPosible.Tablero.EsValida && nodoPosible.Tablero.EsViable)
                     {
                         nodosSiguientes.Add(nodoPosible);
@@ -38,36 +63,13 @@ namespace SudokuLibrary.DFS
 
         public void Print()
         {
-            Console.WriteLine(Accion);
             Tablero.PrintBoard();
         }
 
-        public bool Equals(Nodo? other)
+        public int CompareTo(Nodo? other)
         {
-            //if(other is null) { return false; }
-
-            if (other.Tablero.CeldasConocidas.Count != this.Tablero.CeldasConocidas.Count) return false;
-
-            return Tablero.Equals(other.Tablero);
+            return this.Tablero.CompareTo(other.Tablero);
         }
 
-        public static bool operator==(Nodo? nodoIzquierda, Nodo? nodoDerecha)
-        {
-            if (nodoIzquierda.Tablero.CeldasConocidas.Count != nodoDerecha.Tablero.CeldasConocidas.Count)
-                return false;
-
-            //if(nodoIzquierda is null)
-            //{
-            //    if(nodoDerecha is null)
-            //    {
-            //        return true;
-            //    }
-            //    // Solo el lado izquierdo es null
-            //    return false;
-            //}
-            // Equals maneja el caso en que la derecha es null
-            return nodoIzquierda.Equals(nodoDerecha);
-        }
-        public static bool operator !=(Nodo? nodoIzquierda, Nodo? nodoDerecha) => !(nodoIzquierda == nodoDerecha);
     }
 }

@@ -3,7 +3,7 @@
     public class Matrices
     {
 
-        public static int[,] MATRIZ_VACIA = {
+        public static byte[,] MATRIZ_VACIA = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 0, 0, 0, 0, 0, 0, 0, 0 },   // 0
             {0, 0, 0, 0, 0, 0, 0, 0, 0 },   // 1
@@ -41,7 +41,7 @@
             { 3, 5, 6, 8, 2, 0, 9, 1, 7 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9 = {
+        public static byte[,] MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9 = {
             {1, 2, 3, 4, 0, 0, 0, 0, 0 },
             {4, 0, 0, 0, 0, 0, 1, 2, 3 },
             {0, 0, 0, 1, 2, 3, 4, 0, 0 },
@@ -353,7 +353,7 @@
 
 
         // Resuelto en 3852 pasos visitados, 73 en frontera
-        public static int[,] DE_INTERNET_MEDIUM = {
+        public static byte[,] DE_INTERNET_MEDIUM = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 6, 0, 9, 0, 4, 0, 0, 1 },
             {1, 8, 3, 0, 5, 7, 6, 4, 0 },
@@ -385,7 +385,7 @@
 
 
         // Resuelto en 53 pasos visitados, 176 en frontera
-        public static int[,] DE_INTERNET_HARD = {
+        public static byte[,] DE_INTERNET_HARD = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {9, 0, 4, 0, 0, 5, 6, 0, 0 },   // 0
             {0, 0, 0, 4, 9, 0, 0, 0, 0 },   // 1
@@ -399,7 +399,7 @@
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
 
-        public static int[,] DE_INTERNET_EASY = {
+        public static byte[,] DE_INTERNET_EASY = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 2, 3, 4, 9, 7, 0, 8, 5 },   // 0
             {5, 8, 0, 0, 2, 0, 7, 0, 4 },   // 1
@@ -414,7 +414,7 @@
         };
 
 
-        public static int[,] DE_INTERNET_MEDIUM_2 = {
+        public static byte[,] DE_INTERNET_MEDIUM_2 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 1, 3, 0, 2, 0, 0, 6, 8 },   // 0
             {6, 8, 0, 0, 0, 0, 0, 0, 0 },   // 1
@@ -428,7 +428,7 @@
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
 
-        public static int[,] DE_INTERNET_HARD_2 = {
+        public static byte[,] DE_INTERNET_HARD_2 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {8, 0, 2, 0, 0, 0, 0, 0, 5 },   // 0
             {0, 0, 4, 0, 0, 0, 0, 3, 8 },   // 1
@@ -443,7 +443,7 @@
         };
 
 
-        public static int[,] MATRIZ_MASTER = {
+        public static byte[,] MATRIZ_MASTER = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {4, 0, 0, 9, 7, 0, 0, 0, 0 },   // 0
             {0, 9, 7, 0, 5, 0, 0, 6, 0 },   // 1
@@ -455,6 +455,22 @@
             {9, 0, 0, 0, 0, 0, 0, 0, 0 },   // 7
             {0, 0, 0, 0, 6, 0, 0, 0, 8 }    // 8
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
+        };
+
+
+        public static byte[,] MATRIZ_MASTER_2 = {
+        //   0, 1, 2, 3, 4, 5, 6, 7, 8
+            {9, 0, 0, 0, 5, 0, 0, 6, 0 },   // 0
+            {0, 5, 3, 7, 0, 0, 0, 8, 0 },   // 1
+            {4, 0, 0, 0, 0, 0, 0, 0, 3 },   // 2
+            {0, 9, 0, 0, 0, 0, 0, 0, 0 },   // 3
+            {0, 8, 5, 0, 6, 0, 0, 0, 1 },   // 4
+            {0, 0, 0, 4, 0, 0, 6, 0, 0 },   // 5
+            {0, 6, 1, 0, 4, 0, 0, 0, 8 },   // 6
+            {0, 0, 0, 0, 0, 2, 0, 7, 0 },   // 7
+            {3, 0, 0, 0, 0, 0, 0, 0, 0 }    // 8
+        //   0, 1, 2, 3, 4, 5, 6, 7, 8
+        
         };
     }
 }

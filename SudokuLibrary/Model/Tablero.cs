@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SudokuLibrary.Model
 {
-    public class Tablero : IEquatable<Tablero>, IComparable<Tablero>
+    public class Tablero : IComparable<Tablero>
     {
-        public int[,] Board { get; set; }
+        public byte[,] Board { get; set; }
         public HashSet<Celda> CeldasConocidas { get; set; }
         public Dictionary<int, PendientesByNumber> DicPendientes { get; set; }
         public Dictionary<int, List<Celda>> DicCeldasPara { get; set; }
@@ -15,9 +15,9 @@ namespace SudokuLibrary.Model
         public bool EsSolucion { get; set; } = false;
 
 
-        public Tablero(int[,] matriz)
+        public Tablero(byte[,] matriz)
         {
-            Board = (int[,])matriz.Clone();
+            Board = (byte[,])matriz.Clone();
             ValidaBoard();
             SetCeldasConocidas();
             SetPendientesPorNumero();
@@ -32,31 +32,38 @@ namespace SudokuLibrary.Model
         public Tablero(Tablero padre, Accion accion)
         {
             
-            this.Board = (int[,])padre.Board.Clone();
-            this.Board[accion.Celda.X, accion.Celda.Y] = accion.Numero;
+            this.Board = (byte[,])padre.Board.Clone();
             this.CeldasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
+            if (accion != null)
+            {
+                this.Board[accion.Celda.X, accion.Celda.Y] = accion.Numero;
+                this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
+            }
             this.EsValida = padre.EsValida;
             this.EsViable = padre.EsViable;
+            this.EsSolucion = this.CeldasConocidas.Count == 81;
 
-            this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
-          
+
             this.DicCeldasPara = new Dictionary<int, List<Celda>>();
-            foreach(int num in padre.DicCeldasPara.Keys)
+            foreach (int num in padre.DicCeldasPara.Keys)
             {
-                this.DicCeldasPara[num] = new List<Celda>(padre.DicCeldasPara[num]);
+                if (padre.DicCeldasPara[num].Count > 0)
+                {
+                    this.DicCeldasPara[num] = new List<Celda>(padre.DicCeldasPara[num]);
+                }
             }
 
             this.DicPendientes = new Dictionary<int, PendientesByNumber>();
-            foreach (int num in padre.DicPendientes.Keys)
+            foreach (int num in padre.DicCeldasPara.Keys)
             {
-                this.DicPendientes[num] = padre.DicPendientes[num].CopyPending();
+                if (padre.DicPendientes[num].filas.Count > 0)
+                {
+                    this.DicPendientes[num] = padre.DicPendientes[num].CopyPending();
+                }
             }
-            ReduceDicPendientes(accion.Celda);
-
-            if (this.EsViable)
+            if(accion != null)
             {
-                SetDicViabilidad();
-                EstaResuelta();
+                ReduceDicPendientes(accion.Celda);
             }
         }
 
@@ -84,19 +91,6 @@ namespace SudokuLibrary.Model
                 }
             }
             this.EsViable = true;
-        }
-
-        private void EstaResuelta()
-        {
-            if (CeldasConocidas.Count < 81)
-            {
-                EsSolucion = false;
-                return;
-            }
-            else
-            {
-                EsSolucion = true;
-            }
         }
 
         private void SetCeldasConocidas()
@@ -211,16 +205,15 @@ namespace SudokuLibrary.Model
             return false;
         }        
 
-        public List<Accion>? AccionesDicSiguientes()
+        public (bool sonUnicas, List<Accion>? acciones) AccionesDicSiguientes()
         {
 
             List<Accion> accionesSiguientes = new List<Accion>();
             int menosInstancias = 10;
             int menosCeldasFactibles = 100;
-            int numeroConMayorIndice = 0;
+            byte numeroConMayorIndice = 0;
 
-            //for (int num = 0; num < 9; num++)
-            foreach(int num in DicPendientes.Keys)
+            foreach(byte num in DicPendientes.Keys)
             {
                 int instanciasPendientesNum = DicPendientes[num].filas.Count;
                 int countCeldasFactiblesNum = DicCeldasPara[num].Count;
@@ -255,11 +248,11 @@ namespace SudokuLibrary.Model
             }
             if (accionesSiguientes.Count > 0)
             {
-                return accionesSiguientes;
+                return (true, accionesSiguientes);
             }
             if (numeroConMayorIndice == 0)
             {
-                return null;
+                return (false, null);
             }
 
             foreach (var celda in DicCeldasPara[numeroConMayorIndice])
@@ -276,7 +269,7 @@ namespace SudokuLibrary.Model
                 }
                 Console.WriteLine();
             }
-            return accionesSiguientes;
+            return (false, accionesSiguientes);
         }
 
 
@@ -306,31 +299,49 @@ namespace SudokuLibrary.Model
             int num = Board[celda.X, celda.Y];
             this.DicPendientes[num].ReducePor(celda);
 
-            List<Celda> listaParaEliminar = new List<Celda>();
-            foreach (Celda potencial in this.DicCeldasPara[num])
+            if (this.DicPendientes[num].filas.Count != this.DicPendientes[num].cols.Count ||
+                    this.DicPendientes[num].filas.Count != this.DicPendientes[num].grupos.Count)
             {
-                if (potencial.X == celda.X || potencial.Y == celda.Y || potencial.Z == celda.Z)
-                {
-                    listaParaEliminar.Add(potencial);
-                }
+                this.EsViable = false;
+                this.EsValida = false;
+                return;
             }
-            foreach (Celda cell in listaParaEliminar)
+            if (this.DicCeldasPara.ContainsKey(num))
             {
-                this.DicCeldasPara[num].Remove(cell);
+                List<Celda> listaParaEliminar = new List<Celda>();
+                foreach (Celda potencial in this.DicCeldasPara[num])
+                {
+                    if (potencial.X == celda.X || potencial.Y == celda.Y || potencial.Z == celda.Z)
+                    {
+                        listaParaEliminar.Add(potencial);
+                    }
+                }
+                foreach (Celda cell in listaParaEliminar)
+                {
+                    this.DicCeldasPara[num].Remove(cell);
+                }
             }
 
             foreach (int i in DicCeldasPara.Keys)
             {
                 this.DicCeldasPara[i].Remove(celda);
 
-                if (this.DicPendientes[i].filas.Count != this.DicPendientes[i].cols.Count ||
+                if (DicPendientes.ContainsKey(i))
+                {
+                    if (this.DicPendientes[i].filas.Count != this.DicPendientes[i].cols.Count ||
                     this.DicPendientes[i].filas.Count != this.DicPendientes[i].grupos.Count ||
                     this.DicPendientes[i].filas.Count > this.DicCeldasPara[i].Count)
-                {
-                    this.EsViable = false;
-                    this.EsValida = false;
-                    return;
+                    {
+                        this.EsViable = false;
+                        this.EsValida = false;
+                        return;
+                    }
                 }
+                else
+                {
+                    DicCeldasPara.Remove(i);
+                }
+                
             }
 
         }
@@ -404,17 +415,7 @@ namespace SudokuLibrary.Model
         #endregion
 
         #region Comparaciones
-        public bool Equals(Tablero? other)
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                for(int j = 0; j < 9; j++)
-                {
-                    if (this.Board[i,j] != other.Board[i,j]) return false;
-                }
-            }
-            return true;
-        }
+        
 
         public int CompareTo(Tablero? other)
         {
@@ -444,21 +445,6 @@ namespace SudokuLibrary.Model
             return 0;
         }
 
-        public static bool operator==(Tablero? leftTablero, Tablero? rightTablero)
-        {
-            if(leftTablero is null)
-            {
-                if(rightTablero is null)
-                {
-                    return true;
-                }
-                // Solo el lado izquierdo es null
-                return false;
-            }
-            // Equals maneja el caso en que la derecha es null
-            return leftTablero.Equals(rightTablero);
-        }
-        public static bool operator !=(Tablero tableroIzquierda, Tablero tableroDerecha) => !(tableroIzquierda == tableroDerecha);
         #endregion
     }
 }
