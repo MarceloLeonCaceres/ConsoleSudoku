@@ -297,14 +297,17 @@ namespace SudokuLibrary.Model
         private void ReduceDicPendientes(Celda celda)
         {
             int num = Board[celda.X, celda.Y];
-            this.DicPendientes[num].ReducePor(celda);
-
-            if (this.DicPendientes[num].filas.Count != this.DicPendientes[num].cols.Count ||
-                    this.DicPendientes[num].filas.Count != this.DicPendientes[num].grupos.Count)
+            if (DicPendientes.ContainsKey(num))
             {
-                this.EsViable = false;
-                this.EsValida = false;
-                return;
+                this.DicPendientes[num].ReducePor(celda);
+
+                if (this.DicPendientes[num].filas.Count != this.DicPendientes[num].cols.Count ||
+                        this.DicPendientes[num].filas.Count != this.DicPendientes[num].grupos.Count)
+                {
+                    this.EsViable = false;
+                    this.EsValida = false;
+                    return;
+                }
             }
             if (this.DicCeldasPara.ContainsKey(num))
             {

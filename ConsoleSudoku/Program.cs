@@ -31,7 +31,9 @@ using System.Globalization;
 // Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_MENOS_6), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER), null, null);      //  28m // 4s234
-Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_2), null, null);      //  4s349     //  1s800   1768 visitados
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_2), null, null);      //  4s349     //  1s800   1768 visitados
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_3), null, null);      //  4s349     //  1s800   1768 visitados
+Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_4), null, null);      //  6s210     //  3377 visitados
 
 
 var timer = new Stopwatch();
