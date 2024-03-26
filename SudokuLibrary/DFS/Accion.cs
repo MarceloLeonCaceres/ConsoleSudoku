@@ -7,11 +7,6 @@ namespace SudokuLibrary.DFS
         public Celda? Celda { get; private set; }
         public byte Numero { get; private set; }
 
-        public Accion(byte X, byte Y, byte numero)
-        {
-            Celda = new Celda(X, Y);
-            Numero = numero;
-        }
 
         public Accion(Celda celda, byte numero)
         {
