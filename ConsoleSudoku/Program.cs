@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Globalization;
 
 
-//Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
-//Nodo raiz = new Nodo(new Tablero(TablaSeguimiento.MATRIZ_71), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_71), null, null);
+//Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_71), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9), null, null);   //  1s973
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9), null, null);
 //Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_CASI_RESUELTA_SIN_7_8_y_9), null, null);
