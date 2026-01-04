@@ -1,61 +1,75 @@
 ﻿using SudokuLibrary.DFS;
 using SudokuLibrary.Model;
 
-public sealed class SudokuSolver
+public sealed class SudokuSolver : ISudokuSolver
 {
-    private readonly ConsoleReporter _reporter;
+    private readonly ISolverReporter _reporter;
 
-    public SudokuSolver(ConsoleReporter reporter)
+    public SudokuSolver(ISolverReporter reporter)
     {
         _reporter = reporter;
     }
 
-    public SolveResult Solve(Nodo root)
+    public SolveResult Solve(
+        Nodo root,
+        CancellationToken cancellationToken = default)
     {
         var state = new SolverState();
         state.Frontier.Push(root);
 
-        while (state.Frontier.Count > 0)
+        try
         {
-            var current = state.Frontier.Pop();
-
-            TrackProgress(current, state);
-
-            if (current.Tablero.EsSolucion)
+            while (state.Frontier.Count > 0)
             {
-                state.Timer.Stop();
-                return SolveResult.Success(
-                    root,
-                    current,
-                    state,
-                    SolutionBuilder.Build(current, state.Visited)
-                );
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var current = state.Frontier.Pop();
+                TrackProgress(current, state);
+
+                if (current.Tablero.EsSolucion)
+                {
+                    state.Timer.Stop();
+
+                    return SolveResult.Success(
+                        root,
+                        current,
+                        state,
+                        SolutionBuilder.Build(current, state.Visited));
+                }
+
+                VisitNode(current, state, cancellationToken);
             }
 
-            VisitNode(current, state);
+            return SolveResult.Failure(state);
         }
-
-        return SolveResult.Failure(state);
+        catch (OperationCanceledException)
+        {
+            state.Timer.Stop();
+            throw;
+        }
     }
 
-    public void TrackProgress(Nodo nodo, SolverState state)
+    private void TrackProgress(Nodo nodo, SolverState state)
     {
         int known = nodo.Tablero.CeldasConocidas.Count;
 
         if (known > state.MaxKnownCells)
         {
             state.MaxKnownCells = known;
-            _reporter.PrintProgress(nodo, known);
+            _reporter.OnProgress(nodo, known);
         }
     }
 
-    public void VisitNode(Nodo nodo, SolverState state)
+    private void VisitNode(
+        Nodo nodo,
+        SolverState state,
+        CancellationToken cancellationToken)
     {
         state.Visited[new Tablerito(nodo)] = new NodoSimple(nodo);
 
         if (state.Visited.Count % 100_000 == 0)
         {
-            _reporter.PrintElapsed(state);
+            _reporter.OnElapsed(state);
         }
 
         if (!nodo.Tablero.EsViable)
@@ -67,6 +81,8 @@ public sealed class SudokuSolver
 
         foreach (var child in next)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!state.Frontier.Contains(child) &&
                 !state.Visited.ContainsKey(new Tablerito(child)))
             {

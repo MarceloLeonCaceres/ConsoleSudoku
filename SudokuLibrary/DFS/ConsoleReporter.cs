@@ -2,8 +2,23 @@
 using SudokuLibrary.Model;
 using System.Globalization;
 
-public sealed class ConsoleReporter
+public sealed class ConsoleReporter : ISolverReporter
 {
+
+    public void OnProgress(Nodo nodo, int knownCells)
+    {
+        Console.WriteLine($"Conocidas: {knownCells}");
+        nodo.Print();
+        Console.WriteLine();
+    }   
+
+    public void OnElapsed(SolverState state)
+    {
+        Console.WriteLine($"Visitados: {state.Visited.Count.ToString("0,0", CultureInfo.InvariantCulture)}");
+        Console.WriteLine($"Tiempo: {state.Timer.Elapsed:h\\:mm\\:ss\\.fff}");
+        Console.WriteLine();
+    }
+
     public void PrintProgress(Nodo nodo, int known)
     {
         Console.WriteLine($"Conocidas: {known}");
