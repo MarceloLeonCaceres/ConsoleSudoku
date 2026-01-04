@@ -1,5 +1,4 @@
-﻿using SudokuLibrary.DFS;
-using SudokuLibrary.Model;
+﻿using SudokuLibrary.Model;
 using System.Diagnostics;
 
 public sealed class SolverState

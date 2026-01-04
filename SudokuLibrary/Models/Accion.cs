@@ -1,6 +1,4 @@
-﻿using SudokuLibrary.Model;
-
-namespace SudokuLibrary.DFS
+﻿namespace SudokuLibrary.Model
 {
     public record Accion
     {

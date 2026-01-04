@@ -1,6 +1,4 @@
-﻿using SudokuLibrary.DFS;
-
-namespace SudokuLibrary.Model
+﻿namespace SudokuLibrary.Model
 {
     public class Tablerito : IComparable<Tablerito>
     {

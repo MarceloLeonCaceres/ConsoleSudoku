@@ -1,4 +1,4 @@
-﻿using SudokuLibrary.DFS;
+﻿using SudokuLibrary.Model;
 
 public interface ISudokuSolver
 {
