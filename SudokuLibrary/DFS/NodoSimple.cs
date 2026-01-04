@@ -44,16 +44,13 @@ namespace SudokuLibrary.DFS
             this.Acciones = nodo.Acciones;
             return;
         }
-        //public NodoSimple(byte[,] padre, Accion accion)
-        //{
-        //    Tablerito = (byte[,])padre.Clone();
-        //    Tablerito[accion.Celda.X, accion.Celda.Y] = accion.Numero;
-        //    PadreDelTablerito = padre;
-        //    Accion = accion;
-        //}
 
         public int CompareTo(NodoSimple? other)
         {
+            if(other == null)
+            {
+                return 1;
+            }
             if (this.CuentaConocidas < other.CuentaConocidas)
             {
                 return -1;

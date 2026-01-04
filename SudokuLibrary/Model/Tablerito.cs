@@ -4,7 +4,7 @@ namespace SudokuLibrary.Model
 {
     public class Tablerito : IComparable<Tablerito>
     {
-        public byte[,] Board { get; set; }
+        public byte[,]? Board { get; set; }
         public int CuentaConocidas { get; set; }
         public Tablerito()
         {   
