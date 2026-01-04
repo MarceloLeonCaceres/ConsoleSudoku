@@ -6,20 +6,30 @@ internal static class Program
 {
     static void Main()
     {
+        var cts = new CancellationTokenSource(); 
+
         var root = CreateRootNode();
 
         var reporter = new ConsoleReporter();
-        var solver = new SudokuSolver(reporter);
 
-        var result = solver.Solve(root);
-
-        if (!result.Found)
+        ISudokuSolver solver = new SudokuSolver(reporter);
+        //var solver = new SudokuSolver(reporter);
+        try
         {
-            reporter.PrintNoSolution(result);
-            return;
-        }
+            var result = solver.Solve(root, cts.Token);
 
-        reporter.PrintSolution(result);
+            if (!result.Found)
+            {
+                reporter.PrintNoSolution(result);
+                return;
+            }
+
+            reporter.PrintSolution(result);
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("Solving was canceled por el usuario.");
+        }
     }
 
     private static Nodo CreateRootNode()
