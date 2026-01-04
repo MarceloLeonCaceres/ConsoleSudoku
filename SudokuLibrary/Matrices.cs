@@ -113,7 +113,7 @@
             {9, 1, 2, 3, 4, 5, 6, 7, 0 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA = {
+        public static byte[,] MATRIZ_CASI_RESUELTA = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -153,7 +153,7 @@
 
         // Matriz no valida
         // 2 numeros 2 en la col 7
-        public static int[,] MATRIZ_NO_VALIDA = {
+        public static byte[,] MATRIZ_NO_VALIDA = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {1, 0, 0, 0, 0, 0, 0, 0, 0 },   // 0
             {0, 2, 0, 0, 0, 0, 0, 0, 0 },
