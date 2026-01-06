@@ -1,4 +1,4 @@
-﻿using SudokuLibrary.Model;
+﻿using SudokuLibrary.Models;
 
 internal sealed class NullReporter : ISolverReporter
 {

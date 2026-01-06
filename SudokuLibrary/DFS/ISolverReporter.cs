@@ -1,4 +1,4 @@
-﻿using SudokuLibrary.Model;
+﻿using SudokuLibrary.Models;
 
 public interface ISolverReporter
 {

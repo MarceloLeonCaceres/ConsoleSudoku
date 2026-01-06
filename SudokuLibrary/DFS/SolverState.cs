@@ -1,9 +1,10 @@
-﻿using SudokuLibrary.Model;
+﻿using SudokuLibrary.Models;
 using System.Diagnostics;
 
 public sealed class SolverState
 {
     public Stack<Nodo> Frontier { get; } = new();
+    public HashSet<Tablerito> FrontierSet { get; set; } = new();
     public SortedDictionary<Tablerito, NodoSimple> Visited { get; } = new();
 
     public Stopwatch Timer { get; } = Stopwatch.StartNew();

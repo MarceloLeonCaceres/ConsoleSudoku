@@ -1,4 +1,4 @@
-﻿using SudokuLibrary.Model;
+﻿using SudokuLibrary.Models;
 using System.Globalization;
 
 public sealed class ConsoleReporter : ISolverReporter

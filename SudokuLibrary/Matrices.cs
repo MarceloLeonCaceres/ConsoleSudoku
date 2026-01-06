@@ -77,7 +77,7 @@
             {0, 1, 2, 3, 4, 5, 6, 0, 0 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA_SIN_8_y_9 = {
+        public static byte[,] MATRIZ_CASI_RESUELTA_SIN_8_y_9 = {
             {1, 2, 3, 4, 5, 6, 7, 0, 0 },
             {4, 5, 6, 7, 0, 0, 1, 2, 3 },
             {7, 0, 0, 1, 2, 3, 4, 5, 6 },

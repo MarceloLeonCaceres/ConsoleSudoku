@@ -1,4 +1,4 @@
-﻿using SudokuLibrary.Model;
+﻿using SudokuLibrary.Models;
 
 public sealed record SolveResult(
     bool Found,

@@ -1,5 +1,5 @@
 ﻿using SudokuLibrary;
-using SudokuLibrary.Model;
+using SudokuLibrary.Models;
 
 internal static class Program
 {
@@ -12,7 +12,6 @@ internal static class Program
         var reporter = new ConsoleReporter();
 
         ISudokuSolver solver = new SudokuSolver(reporter);
-        //var solver = new SudokuSolver(reporter);
         try
         {
             var result = solver.Solve(root, cts.Token);
@@ -34,18 +33,13 @@ internal static class Program
     private static Nodo CreateRootNode()
     {
         return new Nodo(
-            new Tablero(Matrices.DE_INTERNET_HARD_2),
+            new Tablero(Matrices.MATRIZ_MIA_1),
             null!,
             null!
         );
     }
 }
 
-//using SudokuLibrary;
-//using SudokuLibrary.DFS;
-//using SudokuLibrary.Model;
-//using System.Diagnostics;
-//using System.Globalization;
 
 ////Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_71), null, null);
 ////Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_71), null, null);
@@ -75,131 +69,3 @@ internal static class Program
 ////Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_2), null, null);      //  3s971     //   1768 visitados
 ////Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_3), null, null);      //  3s966     //    1986 visitados
 ////Nodo raiz = new Nodo(new Tablero(Matrices.MATRIZ_MASTER_4), null, null);      //  6s210     //  3377 visitados
-
-
-//var timer = new Stopwatch();
-//timer.Start();
-//DateTime inicio = DateTime.Now;
-//DateTime fin;
-//Stack<Nodo> frontera = new Stack<Nodo>();
-
-//SortedDictionary<Tablerito, NodoSimple> visitados = new SortedDictionary<Tablerito, NodoSimple>();
-
-//Nodo nodoActual;
-//List<Accion> acciones;
-
-//NodoSimple nodoSimpleActual;
-
-//bool encontroSolucion = false;
-//frontera.Push(raiz);
-
-//int maxConocidos = 0;
-//while (frontera.Count > 0)
-//{
-//    nodoActual = frontera.Pop();
-//    int n = nodoActual.Tablero.CeldasConocidas.Count;
-//    if (n > maxConocidos)
-//    {
-//        PrintNodo(nodoActual, n);
-//        maxConocidos = n;
-//    }
-//    if (nodoActual.Tablero.EsSolucion)
-//    {
-//        timer.Stop();
-//        fin = DateTime.Now;
-//        encontroSolucion = true;
-//        PrintSolucion();
-//        acciones = new List<Accion>();
-//        nodoSimpleActual = new NodoSimple(nodoActual);
-
-//        while(nodoSimpleActual.Acciones is not null)
-//        {
-//            foreach(Accion ax in nodoSimpleActual.Acciones)
-//            {
-//                acciones.Add(ax);
-//            }
-//            nodoSimpleActual = visitados[nodoSimpleActual.PadreDelTablerito];
-//        }
-//        acciones.Reverse();
-
-//        PrintAcciones();
-//        break;
-//    }
-//    else
-//    {
-//        visitados[new Tablerito(nodoActual)] = new NodoSimple(nodoActual);
-
-//        if(visitados.Count % 100000 == 0)
-//        {
-//            PrintTiempoTranscurrido(timer, visitados.Count);
-//        }
-//        if (nodoActual.Tablero.EsViable)
-//        {
-//            List<Nodo>? siguientes = nodoActual.Siguientes();
-//            if (siguientes != null)
-//            {
-//                foreach (Nodo nodo in siguientes)
-//                {
-//                    if (!frontera.Contains(nodo) && !visitados.ContainsKey(new Tablerito(nodo)))
-//                    {
-//                        frontera.Push(nodo);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
-//if (encontroSolucion == false)
-//{
-//    Console.WriteLine();
-//    Console.WriteLine("No hubo solucion, se terminaron los elementos de la frontera.");
-//    Console.WriteLine($"Inicio {inicio.ToLongTimeString()}");
-//    Console.WriteLine($"Fin {DateTime.Now.ToLongTimeString()}");
-//    Console.WriteLine($"Visitados: {visitados.Count}");
-//    Console.WriteLine($"En Frontera: {frontera.Count}");
-//}
-
-//void PrintNodo(Nodo nodo, int n)
-//{
-//    Console.WriteLine($"Conocidas: {n}");
-//    nodoActual.Print();
-//    Console.WriteLine();
-//}
-
-//void PrintSolucion()
-//{
-//    Console.Clear();
-//    Console.WriteLine("Encontre la solucion!!!");
-//    Console.WriteLine($"Inicio {inicio.ToLongTimeString()}");
-//    Console.WriteLine($"Fin {fin.ToLongTimeString()}");
-//    Console.WriteLine($"Tiempo transcurrido: {timer.Elapsed.ToString(@"h\:mm\:ss\.fff")}");
-//    Console.WriteLine();
-//    raiz.Print();
-//    Console.WriteLine();
-//    nodoActual.Print();
-//    Console.WriteLine();
-//}
-
-//void PrintAcciones()
-//{
-//    Console.WriteLine($"Visitados: {visitados.Count.ToString("0,0", CultureInfo.InvariantCulture)}");
-//    Console.WriteLine($"En Frontera: {frontera.Count}");
-//    Console.WriteLine($"Acciones: {acciones.Count}");
-//    Console.WriteLine("Solucion:");
-
-//    foreach (Accion accion in acciones)
-//    {
-//        Console.WriteLine($"{accion.Celda}  => {accion.Numero}");
-//    }
-//    Console.WriteLine();
-//    Console.ReadLine();
-//}
-
-//static void PrintTiempoTranscurrido(Stopwatch timer, int conteoVisitados)
-//{
-//    Console.WriteLine($"Visitados: {conteoVisitados.ToString("0,0", CultureInfo.InvariantCulture)}");
-//    Console.WriteLine($"Tiempo transcurrido: {timer.Elapsed.ToString(@"h\:mm\:ss\.fff")}");
-//    Console.WriteLine($"Hora: {DateTime.Now.ToLongTimeString()}");
-//    Console.WriteLine();
-//}

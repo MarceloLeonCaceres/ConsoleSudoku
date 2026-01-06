@@ -1,4 +1,4 @@
-﻿using SudokuLibrary.Model;
+﻿using SudokuLibrary.Models;
 
 public sealed class SudokuSolver : ISudokuSolver
 {
@@ -15,6 +15,7 @@ public sealed class SudokuSolver : ISudokuSolver
     {
         var state = new SolverState();
         state.Frontier.Push(root);
+        state.FrontierSet.Add(new Tablerito(root));
 
         try
         {
@@ -23,6 +24,8 @@ public sealed class SudokuSolver : ISudokuSolver
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var current = state.Frontier.Pop();
+                state.FrontierSet.Remove(new Tablerito(current));
+
                 TrackProgress(current, state);
 
                 if (current.Tablero.EsSolucion)
@@ -82,10 +85,12 @@ public sealed class SudokuSolver : ISudokuSolver
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (!state.Frontier.Contains(child) &&
-                !state.Visited.ContainsKey(new Tablerito(child)))
+            var childTablero = new Tablerito(child);
+            if (!state.FrontierSet.Contains(childTablero) &&
+                !state.Visited.ContainsKey(childTablero))
             {
                 state.Frontier.Push(child);
+                state.FrontierSet.Add(childTablero);
             }
         }
     }

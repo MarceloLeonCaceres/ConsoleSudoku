@@ -1,4 +1,4 @@
-﻿namespace SudokuLibrary.Model;
+﻿namespace SudokuLibrary.Models;
 
 public record Celda
 {
