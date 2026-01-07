@@ -92,6 +92,9 @@ public class SudokuSolverTests
         yield return new object[] { Matrices.DE_INTERNET_EASY, "Easy Puzzle" };
         yield return new object[] { Matrices.DE_INTERNET_HARD, "Hard Puzzle" };
         yield return new object[] { Matrices.MATRIZ_CASI_RESUELTA_SIN_8_y_9, "Sin 7, 8 y 9" };
+        yield return new object[] { Matrices.MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9, "Sin 5, 6, 7, 8 y 9" };
+        yield return new object[] { Matrices.MATRIZ_H_0, "H0" };
+        yield return new object[] { Matrices.DE_INTERNET_EXPERT, "Expert" };
 
         // You can paste your specific matrices here or reference your existing Matrices class
         // yield return new object[] { Matrices.MATRIZ_MASTER, "Master Matrix" };
