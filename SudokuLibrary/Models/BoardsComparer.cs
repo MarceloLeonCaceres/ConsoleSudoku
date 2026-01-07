@@ -1,6 +1,6 @@
 ﻿namespace SudokuLibrary.Models;
 
-public static class SudokuComparer
+public static class BoardsComparer
 {
     // The logic you had in both classes, now in one place
     public static int CompareBoards(byte[,]? boardA, byte[,]? boardB, int knownA, int knownB)

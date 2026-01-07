@@ -417,7 +417,7 @@ public class Tablero : IComparable<Tablero>
 
     public int CompareTo(Tablero? other)
     {
-        return SudokuComparer.CompareBoards(
+        return BoardsComparer.CompareBoards(
             this.Board,
             other?.Board,
             this.CeldasConocidas.Count,

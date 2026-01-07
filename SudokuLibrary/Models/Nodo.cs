@@ -1,6 +1,6 @@
 ﻿namespace SudokuLibrary.Models;
 
-public class Nodo : IComparable<Nodo>
+public class Nodo
 {
     public Tablero Tablero { get; set; }
     public Tablero? Padre { get; set; }
@@ -54,11 +54,6 @@ public class Nodo : IComparable<Nodo>
     public void Print()
     {
         Tablero.PrintBoard();
-    }
-
-    public int CompareTo(Nodo? other)
-    {
-        return this.Tablero.CompareTo(other.Tablero);
     }
 
 }

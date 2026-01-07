@@ -190,7 +190,7 @@
             {9, 2, 0, 0, 0, 0, 0, 8, 0 },
             {8, 2, 0, 0, 0, 0, 0, 0, 9 }
         };
-        public static int[,] MATRIZ_H_0 = {
+        public static byte[,] MATRIZ_H_0 = {
             {9, 0, 0, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 0, 0 },
             {7, 0, 0, 1, 3, 8, 0, 0, 0 },
@@ -369,7 +369,7 @@
 
 
         // Resuelto en  pasos visitados,  en frontera
-        public static int[,] DE_INTERNET_EXPERT = {
+        public static byte[,] DE_INTERNET_EXPERT = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 4, 0, 0, 0, 0, 1, 0, 6 },
             {0, 5, 0, 0, 0, 2, 4, 0, 0 },
