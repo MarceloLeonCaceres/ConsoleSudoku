@@ -33,7 +33,8 @@ internal static class Program
     private static Nodo CreateRootNode()
     {
         return new Nodo(
-            new Tablero(Matrices.MATRIZ_MIA_1),
+            new Tablero(Matrices.JUEGO_ARTO_INKALA),
+            //new Tablero(Matrices.MATRIZ_MASTER_2),
             null!,
             null!
         );
