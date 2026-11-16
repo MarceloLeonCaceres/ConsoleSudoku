@@ -1,8 +1,11 @@
 ﻿using Aplicacion.DFS;
 using Aplicacion.Interfaces;
+using ConsoleSudoku;
 using Domain.Entities;
 using Domain.Services;
 using Infrastructure.Repositories;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace SudokuTests;
 
@@ -11,6 +14,7 @@ public class SudokuSolverTests
     private readonly ISudokuValidator _validator = new SudokuValidator();
     private readonly ISolutionBuilder _solutionBuilder = new SolutionBuilder();
     private readonly ISudokuPuzzleRepository _repository = new InMemorySudokuRepository();
+    private readonly ILogger<SudokuSolver> _logger = new NullLogger<SudokuSolver>();
     public SudokuSolverTests()
     {
     }
@@ -22,7 +26,7 @@ public class SudokuSolverTests
             null!,
             null!);
 
-        ISudokuSolver solver = new SudokuSolver(new NullReporter(), _solutionBuilder, _validator);
+        ISudokuSolver solver = new SudokuSolver(new NullReporter(), _solutionBuilder, _validator, _logger);
 
         var result = solver.Solve(root);
 
@@ -38,7 +42,7 @@ public class SudokuSolverTests
             null!,
             null!);
 
-        ISudokuSolver solver = new SudokuSolver(new NullReporter(), _solutionBuilder, _validator);
+        ISudokuSolver solver = new SudokuSolver(new NullReporter(), _solutionBuilder, _validator, _logger);
 
         var result = solver.Solve(root);
 
@@ -53,7 +57,7 @@ public class SudokuSolverTests
             null!,
             null!);
 
-        ISudokuSolver solver = new SudokuSolver(new NullReporter(), _solutionBuilder, _validator);
+        ISudokuSolver solver = new SudokuSolver(new NullReporter(), _solutionBuilder, _validator, _logger);
         using var cts = new CancellationTokenSource();
 
         cts.Cancel();
@@ -69,7 +73,7 @@ public class SudokuSolverTests
         // Arrange
         // We use the real concrete reporter (integration style test)
         var reporter = new ConsoleReporter();
-        var solver = new SudokuSolver(reporter, _solutionBuilder, _validator);
+        var solver = new SudokuSolver(reporter, _solutionBuilder, _validator, _logger);
 
         var root = new Nodo(
             new Tablero(matrix, _validator),

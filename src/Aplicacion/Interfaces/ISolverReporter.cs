@@ -9,4 +9,5 @@ public interface ISolverReporter
     void OnElapsed(SolverState state);
     void PrintSolution(SolveResult result);
     void PrintNoSolution(SolveResult result);
+
 }

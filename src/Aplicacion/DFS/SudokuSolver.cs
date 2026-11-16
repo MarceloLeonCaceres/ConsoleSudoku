@@ -2,6 +2,8 @@
 using Aplicacion.Models;
 using Domain.Entities;
 using Domain.Services;
+using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace Aplicacion.DFS;
 
@@ -10,12 +12,15 @@ public sealed class SudokuSolver : ISudokuSolver
     private readonly ISolverReporter _reporter;
     private readonly ISolutionBuilder _solutionBuilder;
     private readonly ISudokuValidator _validator;
+    private readonly ILogger<SudokuSolver> _logger;
 
-    public SudokuSolver(ISolverReporter reporter, ISolutionBuilder solutionBuilder, ISudokuValidator validator)
+    public SudokuSolver(ISolverReporter reporter, ISolutionBuilder solutionBuilder, 
+        ISudokuValidator validator, ILogger<SudokuSolver> logger)
     {
         _reporter = reporter;
         _solutionBuilder = solutionBuilder;
         _validator = validator;
+        _logger = logger;
     }
 
     public SolveResult Solve(
@@ -28,6 +33,8 @@ public sealed class SudokuSolver : ISudokuSolver
         state.Frontier.Push(root);
         state.FrontierSet.Add(new Tablerito(root));
 
+        _logger.LogInformation("Iniciando resolución del Sudoku...");
+
         try
         {
             while (state.Frontier.Count > 0)
@@ -35,6 +42,13 @@ public sealed class SudokuSolver : ISudokuSolver
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var current = state.Frontier.Pop();
+
+                var(sonUnicas, accionesSiguientes) = current.Tablero.AccionesDicSiguientes();
+                if (_logger.IsEnabled(LogLevel.Debug))
+                {
+                    LogEstadoIntermedio(current.Tablero, accionesSiguientes, state.Visited.Count);
+                }
+
                 state.FrontierSet.Remove(new Tablerito(current));
 
                 TrackProgress(current, state);
@@ -104,5 +118,34 @@ public sealed class SudokuSolver : ISudokuSolver
                 state.FrontierSet.Add(childTablero);
             }
         }
+    }
+    private void LogEstadoIntermedio(Tablero tablero, IEnumerable<Accion>? acciones, int visitados)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"Evaluando Nodo (Nodos visitados: {visitados})");
+
+        // Recreamos PrintBoard
+        for (int i = 0; i < 9; i++)
+        {
+            for (int j = 0; j < 9; j++)
+            {
+                var val = tablero.Board[i, j];
+                sb.Append(val == 0 ? "_ " : $"{val} ");
+            }
+            sb.AppendLine();
+        }
+
+        // Recreamos Print de Acciones Siguientes
+        if (acciones != null)
+        {
+            sb.AppendLine("Acciones Siguientes:");
+            foreach (var accion in acciones)
+            {
+                sb.AppendLine($"- Celda: ({accion.Celda.X}, {accion.Celda.Y}) -> {accion.Numero}");
+            }
+        }
+
+        // Enviamos todo el string formateado al logger de una sola vez
+        _logger.LogDebug(sb.ToString());
     }
 }

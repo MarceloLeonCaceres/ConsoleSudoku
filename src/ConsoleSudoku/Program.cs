@@ -1,9 +1,11 @@
 ﻿using Aplicacion.DFS;
 using Aplicacion.Interfaces;
+using ConsoleSudoku;
 using Domain.Entities;
 using Domain.Services;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 internal static class Program
 {
@@ -20,7 +22,7 @@ internal static class Program
         var validator = serviceProvider.GetRequiredService<ISudokuValidator>();
 
         // 3. Obtener matriz y construir nodo raíz
-        var matrizInicial = repository.GetPuzzle("MATRIZ_INTERMEDIA");
+        var matrizInicial = repository.GetPuzzle("DE_INTERNET_EASY");
         var tableroRaiz = new Tablero(matrizInicial, validator);
         var nodoRaiz = new Nodo(tableroRaiz, null!, null!);
 
@@ -45,6 +47,12 @@ internal static class Program
     }
     private static void ConfigureServices(IServiceCollection services)
     {
+        services.AddLogging(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+
         // Dominio
         services.AddSingleton<ISudokuValidator, SudokuValidator>();
 
