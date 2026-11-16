@@ -1,4 +1,4 @@
-﻿namespace SudokuLibrary.Models;
+﻿namespace Domain.Entities;
 
 public class PendientesByNumber
 {
@@ -26,7 +26,8 @@ public class PendientesByNumber
     {
         this.filas.Remove(celda.X);
         this.cols.Remove(celda.Y);
-        this.grupos.Remove(SudokuAbstraction.Cuadro(celda.X, celda.Y));
+        var celdaZ = new Celda(celda.X, celda.Y);
+        this.grupos.Remove(celdaZ.Z);
     }
 
     public bool EsValido()

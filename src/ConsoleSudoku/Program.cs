@@ -1,20 +1,34 @@
-﻿using SudokuLibrary;
-using SudokuLibrary.Models;
+﻿using Aplicacion.DFS;
+using Aplicacion.Interfaces;
+using Domain.Entities;
+using Domain.Services;
+using Infrastructure.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 internal static class Program
 {
     static void Main()
     {
-        var cts = new CancellationTokenSource(); 
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+        using var serviceProvider = services.BuildServiceProvider();
 
-        var root = CreateRootNode();
+        // 2. Resolver Dependencias
+        var solver = serviceProvider.GetRequiredService<ISudokuSolver>();
+        var reporter = serviceProvider.GetRequiredService<ISolverReporter>();
+        var repository = serviceProvider.GetRequiredService<ISudokuPuzzleRepository>();
+        var validator = serviceProvider.GetRequiredService<ISudokuValidator>();
 
-        var reporter = new ConsoleReporter();
+        // 3. Obtener matriz y construir nodo raíz
+        var matrizInicial = repository.GetPuzzle("MATRIZ_INTERMEDIA");
+        var tableroRaiz = new Tablero(matrizInicial, validator);
+        var nodoRaiz = new Nodo(tableroRaiz, null!, null!);
 
-        ISudokuSolver solver = new SudokuSolver(reporter);
+        var cts = new CancellationTokenSource();
+
         try
         {
-            var result = solver.Solve(root, cts.Token);
+            var result = solver.Solve(nodoRaiz, cts.Token);
 
             if (!result.Found)
             {
@@ -29,16 +43,30 @@ internal static class Program
             Console.WriteLine("Solving was canceled por el usuario.");
         }
     }
-
-    private static Nodo CreateRootNode()
+    private static void ConfigureServices(IServiceCollection services)
     {
-        return new Nodo(
-            new Tablero(Matrices.JUEGO_ARTO_INKALA),
-            //new Tablero(Matrices.MATRIZ_MASTER_2),
-            null!,
-            null!
-        );
+        // Dominio
+        services.AddSingleton<ISudokuValidator, SudokuValidator>();
+
+        // Infraestructura
+        services.AddSingleton<ISudokuPuzzleRepository, InMemorySudokuRepository>();
+
+        // Aplicación
+        services.AddTransient<ISolutionBuilder, SolutionBuilder>();
+        services.AddTransient<ISudokuSolver, SudokuSolver>();
+
+        // Presentación (UI)
+        services.AddSingleton<ISolverReporter, ConsoleReporter>();
     }
+    //private static Nodo CreateRootNode()
+    //{
+    //    return new Nodo(
+    //        new Tablero(Matrices.JUEGO_ARTO_INKALA),
+    //        //new Tablero(Matrices.MATRIZ_MASTER_2),
+    //        null!,
+    //        null!
+    //    );
+    //}
 }
 
 

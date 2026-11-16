@@ -1,22 +1,36 @@
-﻿using System.Text;
+﻿using Domain.Services;
 
-namespace SudokuLibrary.Models;
+namespace Domain.Entities;
 
 public class Tablero : IComparable<Tablero>
 {
     public byte[,] Board { get; set; }
-    public HashSet<Celda> CeldasConocidas { get; set; }
-    public Dictionary<int, PendientesByNumber> DicPendientes { get; set; }
-    public Dictionary<int, List<Celda>> DicCeldasPara { get; set; }
+
+    public IReadOnlySet<Celda> CeldasConocidas => _celdasConocidas;
+    public IReadOnlyDictionary<int, PendientesByNumber> DicPendientes => _dicPendientes;
+    public IReadOnlyDictionary<int, List<Celda>> DicCeldasPara => _dicCeldasPara;
+
+    private readonly HashSet<Celda> _celdasConocidas;
+    private readonly Dictionary<int, PendientesByNumber> _dicPendientes;
+    private readonly Dictionary<int, List<Celda>> _dicCeldasPara;
+
     public bool EsValida { get; private set; } = false;
-    public bool EsViable { get; set; } = true;
-    public bool EsSolucion { get; set; } = false;
+    public bool EsViable { get; private set; } = true;
+    public bool EsSolucion { get; private set; } = false;
 
-
-    public Tablero(byte[,] matriz)
+    public Tablero(byte[,] matriz, ISudokuValidator validator)
     {
+        ArgumentNullException.ThrowIfNull(matriz, nameof(matriz));
+        ArgumentNullException.ThrowIfNull(validator, nameof(validator));
+
         Board = (byte[,])matriz.Clone();
-        ValidaBoard();
+
+        _celdasConocidas = new HashSet<Celda>();
+        _dicPendientes = new Dictionary<int, PendientesByNumber>();
+        _dicCeldasPara = new Dictionary<int, List<Celda>>();
+
+        EsValida = validator.EsMatrizValida(Board);
+
         SetCeldasConocidas();
         SetPendientesPorNumero();
         ReducePendientes();
@@ -27,36 +41,38 @@ public class Tablero : IComparable<Tablero>
         }
     }
 
-    public Tablero(Tablero padre, Accion accion)
+    public Tablero(Tablero padre, Accion accion, ISudokuValidator validator)
     {
+        ArgumentNullException.ThrowIfNull(padre, nameof(padre));
+        ArgumentNullException.ThrowIfNull(validator, nameof(validator));
 
         this.Board = (byte[,])padre.Board.Clone();
-        this.CeldasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
+        _celdasConocidas = new HashSet<Celda>(padre.CeldasConocidas);
+
         if (accion != null)
         {
             this.Board[accion.Celda.X, accion.Celda.Y] = accion.Numero;
-            this.CeldasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
+            _celdasConocidas.Add(new Celda(accion.Celda.X, accion.Celda.Y));
         }
-        this.EsValida = padre.EsValida;
+        this.EsValida = validator.EsMatrizValida(this.Board);
         this.EsViable = padre.EsViable;
         this.EsSolucion = this.CeldasConocidas.Count == 81;
 
-
-        this.DicCeldasPara = new Dictionary<int, List<Celda>>();
+        _dicCeldasPara = new Dictionary<int, List<Celda>>();
         foreach (int num in padre.DicCeldasPara.Keys)
         {
             if (padre.DicCeldasPara[num].Count > 0)
             {
-                this.DicCeldasPara[num] = new List<Celda>(padre.DicCeldasPara[num]);
+                _dicCeldasPara[num] = new List<Celda>(padre.DicCeldasPara[num]);
             }
         }
 
-        this.DicPendientes = new Dictionary<int, PendientesByNumber>();
+        _dicPendientes = new Dictionary<int, PendientesByNumber>();
         foreach (int num in padre.DicCeldasPara.Keys)
         {
             if (padre.DicPendientes[num].filas.Count > 0)
             {
-                this.DicPendientes[num] = padre.DicPendientes[num].CopyPending();
+                _dicPendientes[num] = padre.DicPendientes[num].CopyPending();
             }
         }
         if (accion != null)
@@ -65,16 +81,16 @@ public class Tablero : IComparable<Tablero>
         }
     }
 
-    private void ValidaBoard()
-    {
-        bool esvalida = SudokuAbstraction.Valida(Board);
-        if (!esvalida)
-        {
-            Console.WriteLine("Esta matriz no es valida");
-            Console.WriteLine();
-        }
-        EsValida = esvalida;
-    }
+    //private void ValidaBoard()
+    //{
+    //    bool esvalida = SudokuAbstraction.Valida(Board);
+    //    if (!esvalida)
+    //    {
+    //        Console.WriteLine("Esta matriz no es valida");
+    //        Console.WriteLine();
+    //    }
+    //    EsValida = esvalida;
+    //}
 
     private void SetDicViabilidad()
     {
@@ -93,14 +109,13 @@ public class Tablero : IComparable<Tablero>
 
     private void SetCeldasConocidas()
     {
-        CeldasConocidas = new HashSet<Celda>();
         for (int i = 0; i < 9; ++i)
         {
             for (int j = 0; j < 9; ++j)
             {
                 if (Board[i, j] > 0)
                 {
-                    CeldasConocidas.Add(new Celda(i, j));
+                    _celdasConocidas.Add(new Celda(i, j));
                 }
             }
         }
@@ -108,19 +123,18 @@ public class Tablero : IComparable<Tablero>
 
     private void SetPendientesPorNumero()
     {
-        DicPendientes = new Dictionary<int, PendientesByNumber>();
         for (int i = 1; i <= 9; ++i)
         {
-            DicPendientes[i] = new PendientesByNumber();
+            _dicPendientes[i] = new PendientesByNumber();
         }
     }
 
     private void SetCeldasPara_De_DicPendientes()
     {
-        DicCeldasPara = new Dictionary<int, List<Celda>>();
+        _dicCeldasPara.Clear();
         foreach (int num in DicPendientes.Keys)
         {
-            DicCeldasPara[num] = new List<Celda>();
+            _dicCeldasPara[num] = new List<Celda>();
             foreach (int i in DicPendientes[num].filas)
             {
                 int contador = 0;
@@ -128,11 +142,17 @@ public class Tablero : IComparable<Tablero>
                 {
                     foreach (int k in DicPendientes[num].grupos)
                     {
-                        if (SudokuAbstraction.Cuadro(i, j) == k && Board[i, j] == 0)
+                        var celdaTemporal = new Celda(i, j);
+                        if (celdaTemporal.Z == k && Board[i, j] == 0)
                         {
-                            DicCeldasPara[num].Add(new Celda(i, j, k));
+                            _dicCeldasPara[num].Add(celdaTemporal);
                             contador++;
                         }
+                        //if (SudokuAbstraction.Cuadro(i, j) == k && Board[i, j] == 0)
+                        //{
+                        //    DicCeldasPara[num].Add(new Celda(i, j, k));
+                        //    contador++;
+                        //}
                     }
                 }
                 if (contador == 0)
@@ -141,67 +161,77 @@ public class Tablero : IComparable<Tablero>
                     return;
                 }
             }
-            foreach (int fila in DicPendientes[num].filas)
+
+            bool faltanFilas = DicPendientes[num].filas.Any(fila => !_dicCeldasPara[num].Any(c => c.X == fila));
+            bool faltanCols = DicPendientes[num].cols.Any(col => !_dicCeldasPara[num].Any(c => c.Y == col));
+            bool faltanGrupos = DicPendientes[num].grupos.Any(z => !_dicCeldasPara[num].Any(c => c.Z == z));
+
+            if (faltanFilas || faltanCols || faltanGrupos)
             {
-                if (TieneAlgunaCelda(DicCeldasPara[num], "row", fila) == false)
-                {
-                    this.EsViable = false;
-                    return;
-                }
+                EsViable = false;
+                return;
             }
-            foreach (int col in DicPendientes[num].cols)
-            {
-                if (TieneAlgunaCelda(DicCeldasPara[num], "col", col) == false)
-                {
-                    this.EsViable = false;
-                    return;
-                }
-            }
-            foreach (int z in DicPendientes[num].grupos)
-            {
-                if (TieneAlgunaCelda(DicCeldasPara[num], "grupo", z) == false)
-                {
-                    this.EsViable = false;
-                    return;
-                }
-            }
+            //foreach (int fila in DicPendientes[num].filas)
+            //{
+            //    if (TieneAlgunaCelda(DicCeldasPara[num], "row", fila) == false)
+            //    {
+            //        this.EsViable = false;
+            //        return;
+            //    }
+            //}
+            //foreach (int col in DicPendientes[num].cols)
+            //{
+            //    if (TieneAlgunaCelda(DicCeldasPara[num], "col", col) == false)
+            //    {
+            //        this.EsViable = false;
+            //        return;
+            //    }
+            //}
+            //foreach (int z in DicPendientes[num].grupos)
+            //{
+            //    if (TieneAlgunaCelda(DicCeldasPara[num], "grupo", z) == false)
+            //    {
+            //        this.EsViable = false;
+            //        return;
+            //    }
+            //}
         }
     }
 
-    private static bool TieneAlgunaCelda(List<Celda> paraNums, string rowColZ, int numRowColZ)
-    {
-        if (rowColZ == "row")
-        {
-            foreach (Celda celda in paraNums)
-            {
-                if (celda.X == numRowColZ)
-                {
-                    return true;
-                }
-            }
-        }
-        else if (rowColZ == "col")
-        {
-            foreach (Celda celda in paraNums)
-            {
-                if (celda.Y == numRowColZ)
-                {
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            foreach (Celda celda in paraNums)
-            {
-                if (celda.Z == numRowColZ)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    //private static bool TieneAlgunaCelda(List<Celda> paraNums, string rowColZ, int numRowColZ)
+    //{
+    //    if (rowColZ == "row")
+    //    {
+    //        foreach (Celda celda in paraNums)
+    //        {
+    //            if (celda.X == numRowColZ)
+    //            {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    else if (rowColZ == "col")
+    //    {
+    //        foreach (Celda celda in paraNums)
+    //        {
+    //            if (celda.Y == numRowColZ)
+    //            {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        foreach (Celda celda in paraNums)
+    //        {
+    //            if (celda.Z == numRowColZ)
+    //            {
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
 
     public (bool sonUnicas, List<Accion>? acciones) AccionesDicSiguientes()
     {
@@ -266,8 +296,10 @@ public class Tablero : IComparable<Tablero>
                 Console.WriteLine(accion);
             }
             Console.WriteLine();
+
+            return (false, accionesSiguientes);
         }
-        return (false, accionesSiguientes);
+        return (false, null);
     }
 
     private void ReducePendientes()
@@ -284,9 +316,9 @@ public class Tablero : IComparable<Tablero>
                 this.EsValida = false;
                 return;
             }
-            if (this.DicPendientes[i].filas.Count == 0)
+            if (DicPendientes[i].filas.Count == 0)
             {
-                this.DicPendientes.Remove(i);
+                _dicPendientes.Remove(i);
             }
         }
     }
@@ -339,78 +371,76 @@ public class Tablero : IComparable<Tablero>
             }
             else
             {
-                DicCeldasPara.Remove(i);
+                _dicCeldasPara.Remove(i);
             }
-
         }
-
     }
 
     #region PrintEnConsola
-    public void PrintBoard()
-    {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                sb.Append(Board[i, j] == 0 ? "_" : Board[i, j]);
-                sb.Append(" ");
-            }
-            sb.AppendLine();
-        }
-        Console.WriteLine(sb.ToString());
-        Console.WriteLine();
-    }
+    //public void PrintBoard()
+    //{
+    //    StringBuilder sb = new StringBuilder();
+    //    for (int i = 0; i < 9; i++)
+    //    {
+    //        for (int j = 0; j < 9; j++)
+    //        {
+    //            sb.Append(Board[i, j] == 0 ? "_" : Board[i, j]);
+    //            sb.Append(" ");
+    //        }
+    //        sb.AppendLine();
+    //    }
+    //    Console.WriteLine(sb.ToString());
+    //    Console.WriteLine();
+    //}
 
-    public void PrintPendientes()
-    {
-        for (int i = 0; i < 9; i++)
-        {
-            Console.WriteLine($"Pendientes {i + 1}: {string.Join(", ", DicPendientes[i].filas)}: \t {string.Join(", ", DicPendientes[i].cols)}: \t {string.Join(", ", DicPendientes[i].grupos)} ");
-        }
-        Console.WriteLine();
-    }
-    public void PrintCeldasPara()
-    {
-        for (int num = 0; num < 9; num++)
-        {
-            Console.WriteLine($"Celdas para el numero {num + 1}:");
-            PrintCeldas(DicCeldasPara[num]);
-        }
-    }
+    //public void PrintPendientes()
+    //{
+    //    for (int i = 0; i < 9; i++)
+    //    {
+    //        Console.WriteLine($"Pendientes {i + 1}: {string.Join(", ", DicPendientes[i].filas)}: \t {string.Join(", ", DicPendientes[i].cols)}: \t {string.Join(", ", DicPendientes[i].grupos)} ");
+    //    }
+    //    Console.WriteLine();
+    //}
+    //public void PrintCeldasPara()
+    //{
+    //    for (int num = 0; num < 9; num++)
+    //    {
+    //        Console.WriteLine($"Celdas para el numero {num + 1}:");
+    //        PrintCeldas(DicCeldasPara[num]);
+    //    }
+    //}
 
-    public void PrintCeldas(List<Celda> celdas)
-    {
-        foreach (Celda celda in celdas)
-        {
-            Console.WriteLine(celda);
-        }
-        Console.WriteLine();
-    }
+    //public void PrintCeldas(List<Celda> celdas)
+    //{
+    //    foreach (Celda celda in celdas)
+    //    {
+    //        Console.WriteLine(celda);
+    //    }
+    //    Console.WriteLine();
+    //}
 
-    public void PrintResumen()
-    {
-        for (int num = 0; num < 9; num++)
-        {
-            int countCeldasFactibles = DicCeldasPara[num].Count;
-            int instanciasPendientes = DicPendientes[num].filas.Count;
-            float indice;
+    //public void PrintResumen()
+    //{
+    //    for (int num = 0; num < 9; num++)
+    //    {
+    //        int countCeldasFactibles = DicCeldasPara[num].Count;
+    //        int instanciasPendientes = DicPendientes[num].filas.Count;
+    //        float indice;
 
-            Console.WriteLine($"Celdas para el numero {num + 1}:");
-            if (countCeldasFactibles == 0 && instanciasPendientes > 0)
-            {
-                Console.WriteLine("Error, esta matriz ya no tiene solucion");
-                break;
-            }
-            else if (countCeldasFactibles > 0 && instanciasPendientes > 0)
-            {
-                indice = (float)countCeldasFactibles / instanciasPendientes;
-                Console.WriteLine($"Total Celdas factibles: {countCeldasFactibles} \t\t para {instanciasPendientes} instancias \t\t indice:{indice:F2}");
-            }
-            Console.WriteLine();
-        }
-    }
+    //        Console.WriteLine($"Celdas para el numero {num + 1}:");
+    //        if (countCeldasFactibles == 0 && instanciasPendientes > 0)
+    //        {
+    //            Console.WriteLine("Error, esta matriz ya no tiene solucion");
+    //            break;
+    //        }
+    //        else if (countCeldasFactibles > 0 && instanciasPendientes > 0)
+    //        {
+    //            indice = (float)countCeldasFactibles / instanciasPendientes;
+    //            Console.WriteLine($"Total Celdas factibles: {countCeldasFactibles} \t\t para {instanciasPendientes} instancias \t\t indice:{indice:F2}");
+    //        }
+    //        Console.WriteLine();
+    //    }
+    //}
     #endregion
 
     #region Comparaciones

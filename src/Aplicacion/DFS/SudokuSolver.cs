@@ -1,12 +1,21 @@
-﻿using SudokuLibrary.Models;
+﻿using Aplicacion.Interfaces;
+using Aplicacion.Models;
+using Domain.Entities;
+using Domain.Services;
+
+namespace Aplicacion.DFS;
 
 public sealed class SudokuSolver : ISudokuSolver
 {
     private readonly ISolverReporter _reporter;
+    private readonly ISolutionBuilder _solutionBuilder;
+    private readonly ISudokuValidator _validator;
 
-    public SudokuSolver(ISolverReporter reporter)
+    public SudokuSolver(ISolverReporter reporter, ISolutionBuilder solutionBuilder, ISudokuValidator validator)
     {
         _reporter = reporter;
+        _solutionBuilder = solutionBuilder;
+        _validator = validator;
     }
 
     public SolveResult Solve(
@@ -14,6 +23,8 @@ public sealed class SudokuSolver : ISudokuSolver
         CancellationToken cancellationToken = default)
     {
         var state = new SolverState();
+        state.Timer.Start();
+
         state.Frontier.Push(root);
         state.FrontierSet.Add(new Tablerito(root));
 
@@ -36,13 +47,13 @@ public sealed class SudokuSolver : ISudokuSolver
                         root,
                         current,
                         state,
-                        SolutionBuilder.Build(current, state.Visited));
+                        _solutionBuilder.Build(current, state.Visited));
                 }
 
                 VisitNode(current, state, cancellationToken);
             }
 
-            return SolveResult.Failure(state);
+            return SolveResult.Failure(root, state);
         }
         catch (OperationCanceledException)
         {
@@ -77,7 +88,7 @@ public sealed class SudokuSolver : ISudokuSolver
         if (!nodo.Tablero.EsViable)
             return;
 
-        var next = nodo.Siguientes();
+        var next = nodo.Siguientes(_validator);
         if (next == null)
             return;
 

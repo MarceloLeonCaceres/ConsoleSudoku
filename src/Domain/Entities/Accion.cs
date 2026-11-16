@@ -1,15 +1,13 @@
-﻿namespace SudokuLibrary.Models;
+﻿namespace Domain.Entities;
 
 public record Accion
 {
     public Celda? Celda { get; private set; }
     public byte Numero { get; private set; }
 
-
     public Accion(Celda celda, byte numero)
     {
         Celda = celda;
         Numero = numero;
     }
-
 }

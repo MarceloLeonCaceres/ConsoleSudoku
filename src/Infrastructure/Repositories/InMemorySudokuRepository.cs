@@ -1,9 +1,76 @@
-﻿namespace SudokuLibrary
-{
-    public class Matrices
-    {
+﻿using Aplicacion.Interfaces;
 
-        public static byte[,] MATRIZ_VACIA = {
+namespace Infrastructure.Repositories;
+
+public class InMemorySudokuRepository : ISudokuPuzzleRepository
+{
+    // Diccionario interno para mapear nombres de puzzles a sus matrices
+    private readonly Dictionary<string, byte[,]> _puzzles;
+
+    public InMemorySudokuRepository()
+    {
+        _puzzles = new Dictionary<string, byte[,]>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "MATRIZ_VACIA", MATRIZ_VACIA },
+            { "JUEGO_ARTO_INKALA", JUEGO_ARTO_INKALA },
+            { "MATRIZ_RESUELTA", MATRIZ_RESUELTA },
+            { "MATRIZ_INTERMEDIA", MATRIZ_INTERMEDIA },
+            { "MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9", MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9 },
+            { "MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9", MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9 },
+            { "MATRIZ_CASI_RESUELTA_SIN_7_8_y_9", MATRIZ_CASI_RESUELTA_SIN_7_8_y_9 },
+            { "MATRIZ_CASI_RESUELTA_SIN_8_y_9", MATRIZ_CASI_RESUELTA_SIN_8_y_9 },
+            { "MATRIZ_CASI_RESUELTA_MENOS_8_y_9", MATRIZ_CASI_RESUELTA_MENOS_8_y_9 },
+            { "MATRIZ_CASI_RESUELTA_MENOS_1", MATRIZ_CASI_RESUELTA_MENOS_1 },
+            { "MATRIZ_CASI_RESUELTA", MATRIZ_CASI_RESUELTA },
+            { "MATRIZ_CASI_RESUELTA_MENOS_9", MATRIZ_CASI_RESUELTA_MENOS_9 },
+            { "MATRIZ_CASI_RESUELTA_MENOS_6", MATRIZ_CASI_RESUELTA_MENOS_6 },
+            { "MATRIZ_NO_VALIDA", MATRIZ_NO_VALIDA },
+            { "MATRIZ_DIAGONAL", MATRIZ_DIAGONAL },
+            { "MATRIZ_EJEMPLO_1", MATRIZ_EJEMPLO_1 },
+            { "MATRIZ_H_0", MATRIZ_H_0 },
+            { "MATRIZ_MIA_1", MATRIZ_MIA_1 },
+            { "MATRIZ_MIA_2", MATRIZ_MIA_2 },
+            { "MATRIZ_H_1", MATRIZ_H_1 },
+            { "MATRIZ_H_2", MATRIZ_H_2 },
+            { "MATRIZ_H_3", MATRIZ_H_3 },
+            { "MATRIZ_H_4", MATRIZ_H_4 },
+            { "MATRIZ_H_5", MATRIZ_H_5 },
+            { "MATRIZ_H", MATRIZ_H },
+            { "MATRIZ_H_Sin_Solucion", MATRIZ_H_Sin_Solucion },
+            { "DE_INTERNET_MEDIUM", DE_INTERNET_MEDIUM },
+            { "DE_INTERNET_EXPERT", DE_INTERNET_EXPERT },
+            { "DE_INTERNET_HARD", DE_INTERNET_HARD },
+            { "DE_INTERNET_EASY", DE_INTERNET_EASY },
+            { "DE_INTERNET_MEDIUM_2", DE_INTERNET_MEDIUM_2 },
+            { "DE_INTERNET_HARD_2", DE_INTERNET_HARD_2 },
+            { "MATRIZ_MASTER", MATRIZ_MASTER },
+            { "MATRIZ_MASTER_2", MATRIZ_MASTER_2 },
+            { "MATRIZ_MASTER_3", MATRIZ_MASTER_3 },
+            { "MATRIZ_MASTER_4", MATRIZ_MASTER_4 }
+        };
+    }
+
+    public byte[,] GetPuzzle(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("El nombre del puzzle no puede estar vacío.", nameof(name));
+
+        if (_puzzles.TryGetValue(name, out var puzzle))
+        {
+            // COPIA DEFENSIVA: Clonamos la matriz base antes de entregarla.
+            // Si no lo hacemos, si el solver modifica la matriz entregada, 
+            // modificará permanentemente el catálogo en memoria.
+            return (byte[,])puzzle.Clone();
+        }
+
+        throw new KeyNotFoundException($"El puzzle '{name}' no existe en el repositorio.");
+    }
+
+    public IEnumerable<string> GetAvailablePuzzles() => _puzzles.Keys.ToList();
+
+    #region Datos estáticos privados (Semillas)
+
+    private static readonly byte[,] MATRIZ_VACIA = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 0, 0, 0, 0, 0, 0, 0, 0 },   // 0
             {0, 0, 0, 0, 0, 0, 0, 0, 0 },   // 1
@@ -16,7 +83,7 @@
             {0, 0, 0, 0, 0, 0, 0, 0, 0 }    // 8
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
-        public static byte[,] JUEGO_ARTO_INKALA = {
+    private static readonly byte[,] JUEGO_ARTO_INKALA = {
             {8, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 3, 6, 0, 0, 0, 0, 0},
             {0, 7, 0, 0, 9, 0, 2, 0, 0},
@@ -27,7 +94,7 @@
             {0, 0, 8, 5, 0, 0, 0, 1, 0},
             {0, 9, 0, 0, 0, 0, 4, 0, 0}
         };
-        public static int[,] MATRIZ_RESUELTA = {
+    private static readonly byte[,] MATRIZ_RESUELTA = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -39,7 +106,7 @@
             {9, 1, 2, 3, 4, 5, 6, 7, 8 }
         };
 
-        public static int[,] MATRIZ_INTERMEDIA = {
+    private static readonly byte[,] MATRIZ_INTERMEDIA = {
             { 9, 8, 3, 5, 6, 7, 0, 0, 2 },
             { 1, 6, 5, 2, 9, 4, 8, 7, 3 },
             { 7, 2, 4, 1, 3, 8, 5, 9, 6 },
@@ -51,7 +118,7 @@
             { 3, 5, 6, 8, 2, 0, 9, 1, 7 }
         };
 
-        public static byte[,] MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_SIN_5_6_7_8_y_9 = {
             {1, 2, 3, 4, 0, 0, 0, 0, 0 },
             {4, 0, 0, 0, 0, 0, 1, 2, 3 },
             {0, 0, 0, 1, 2, 3, 4, 0, 0 },
@@ -63,7 +130,7 @@
             {0, 1, 2, 3, 4, 0, 0, 0, 0 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_SIN_6_7_8_y_9 = {
             {1, 2, 3, 4, 5, 0, 0, 0, 0 },
             {4, 5, 0, 0, 0, 0, 1, 2, 3 },
             {0, 0, 0, 1, 2, 3, 4, 5, 0 },
@@ -75,7 +142,7 @@
             {0, 1, 2, 3, 4, 5, 0, 0, 0 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA_SIN_7_8_y_9 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_SIN_7_8_y_9 = {
             {1, 2, 3, 4, 5, 6, 0, 0, 0 },
             {4, 5, 6, 0, 0, 0, 1, 2, 3 },
             {0, 0, 0, 1, 2, 3, 4, 5, 6 },
@@ -87,7 +154,7 @@
             {0, 1, 2, 3, 4, 5, 6, 0, 0 }
         };
 
-        public static byte[,] MATRIZ_CASI_RESUELTA_SIN_8_y_9 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_SIN_8_y_9 = {
             {1, 2, 3, 4, 5, 6, 7, 0, 0 },
             {4, 5, 6, 7, 0, 0, 1, 2, 3 },
             {7, 0, 0, 1, 2, 3, 4, 5, 6 },
@@ -99,7 +166,7 @@
             {0, 1, 2, 3, 4, 5, 6, 7, 0 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA_MENOS_8_y_9 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_MENOS_8_y_9 = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 0, 0, 1, 2, 3, 4, 5, 6 },
@@ -111,7 +178,7 @@
             {0, 1, 2, 3, 4, 5, 6, 7, 0 }
         };
 
-        public static int[,] MATRIZ_CASI_RESUELTA_MENOS_1 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_MENOS_1 = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -123,7 +190,7 @@
             {9, 1, 2, 3, 4, 5, 6, 7, 0 }
         };
 
-        public static byte[,] MATRIZ_CASI_RESUELTA = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -136,7 +203,7 @@
         };
 
 
-        public static int[,] MATRIZ_CASI_RESUELTA_MENOS_9 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_MENOS_9 = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -149,7 +216,7 @@
         };
 
 
-        public static int[,] MATRIZ_CASI_RESUELTA_MENOS_6 = {
+    private static readonly byte[,] MATRIZ_CASI_RESUELTA_MENOS_6 = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -161,9 +228,9 @@
             {9, 1, 2, 3, 4, 5, 0, 0, 0 }
         };
 
-        // Matriz no valida
-        // 2 numeros 2 en la col 7
-        public static byte[,] MATRIZ_NO_VALIDA = {
+    // Matriz no valida
+    // 2 numeros 2 en la col 7
+    private static readonly byte[,] MATRIZ_NO_VALIDA = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {1, 0, 0, 0, 0, 0, 0, 0, 0 },   // 0
             {0, 2, 0, 0, 0, 0, 0, 0, 0 },
@@ -177,7 +244,7 @@
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
 
-        public static int[,] MATRIZ_DIAGONAL = {
+    private static readonly byte[,] MATRIZ_DIAGONAL = {
             {1, 0, 0, 0, 0, 0, 0, 0, 0 },
             {0, 2, 0, 0, 0, 0, 0, 0, 0 },
             {0, 0, 3, 0, 0, 0, 0, 0, 0 },
@@ -189,7 +256,7 @@
             {0, 0, 0, 0, 0, 0, 0, 0, 9 }
         };
 
-        public static int[,] MATRIZ_EJEMPLO_1 = {
+    private static readonly byte[,] MATRIZ_EJEMPLO_1 = {
             {1, 2, 3, 4, 5, 6, 7, 8, 9 },
             {4, 5, 6, 7, 8, 9, 1, 2, 3 },
             {7, 8, 9, 1, 2, 3, 4, 5, 6 },
@@ -200,7 +267,7 @@
             {9, 2, 0, 0, 0, 0, 0, 8, 0 },
             {8, 2, 0, 0, 0, 0, 0, 0, 9 }
         };
-        public static byte[,] MATRIZ_H_0 = {
+    private static readonly byte[,] MATRIZ_H_0 = {
             {9, 0, 0, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 0, 0 },
             {7, 0, 0, 1, 3, 8, 0, 0, 0 },
@@ -212,7 +279,7 @@
             {3, 0, 0, 0, 0, 0, 0, 0, 7 }
         };
 
-        public static byte[,] MATRIZ_MIA_1 = {
+    private static readonly byte[,] MATRIZ_MIA_1 = {
             {9, 0, 3, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 0, 3 },
             {7, 2, 0, 1, 3, 8, 0, 0, 0 },
@@ -224,7 +291,7 @@
             {3, 0, 0, 8, 0, 0, 0, 0, 7 }
         };
 
-        public static int[,] MATRIZ_MIA_2 = {
+    private static readonly byte[,] MATRIZ_MIA_2 = {
             {9, 0, 3, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 9, 7, 0, 0, 3 },
             {7, 2, 0, 1, 3, 8, 0, 0, 0 },
@@ -235,7 +302,7 @@
             {0, 0, 7, 3, 0, 6, 4, 0, 0 },
             {3, 0, 0, 8, 0, 0, 0, 0, 7 }
         };
-        public static int[,] MATRIZ_H_1 = {
+    private static readonly byte[,] MATRIZ_H_1 = {
             {9, 0, 3, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 0, 0 },
             {7, 2, 0, 1, 3, 8, 0, 0, 0 },
@@ -247,7 +314,7 @@
             {3, 0, 0, 0, 0, 0, 0, 0, 7 }
         };
 
-        public static int[,] MATRIZ_H_2 = {
+    private static readonly byte[,] MATRIZ_H_2 = {
             {9, 0, 3, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 0, 0 },
             {7, 2, 0, 1, 3, 8, 0, 0, 0 },
@@ -260,7 +327,7 @@
         };
 
 
-        public static int[,] MATRIZ_H_3 = {
+    private static readonly byte[,] MATRIZ_H_3 = {
             {9, 0, 3, 0, 0, 0, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 0, 3 },
             {7, 2, 0, 1, 3, 8, 0, 0, 0 },
@@ -272,9 +339,9 @@
             {3, 0, 0, 8, 0, 0, 0, 0, 7 }
         };
 
-        // 7 en la (0, 5)
-        // 7 en la (1, 7)
-        public static int[,] MATRIZ_H_4 = {
+    // 7 en la (0, 5)
+    // 7 en la (1, 7)
+    private static readonly byte[,] MATRIZ_H_4 = {
             {9, 0, 3, 0, 0, 7, 0, 0, 2 },
             {0, 0, 5, 2, 0, 0, 0, 7, 3 },
             {7, 2, 0, 1, 3, 8, 0, 0, 0 },
@@ -286,19 +353,19 @@
             {3, 0, 0, 8, 0, 0, 0, 0, 7 }
         };
 
-        // 5 en la (0, 3)
-        // obliga a:
-        // 4 en la (1, 5)
-        // 5 en la (2, 6)
-        // 5 en la (4, 5) 
-        // obliga a:
-        // 2 en la (5, 5)
-        // 9 en la (1, 4)
-        // obliga a:
-        // 2 en la (4, 6)
-        // 6 en la (0, 4)
-        // 9 en la (8, 5)
-        public static int[,] MATRIZ_H_5 = {
+    // 5 en la (0, 3)
+    // obliga a:
+    // 4 en la (1, 5)
+    // 5 en la (2, 6)
+    // 5 en la (4, 5) 
+    // obliga a:
+    // 2 en la (5, 5)
+    // 9 en la (1, 4)
+    // obliga a:
+    // 2 en la (4, 6)
+    // 6 en la (0, 4)
+    // 9 en la (8, 5)
+    private static readonly byte[,] MATRIZ_H_5 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {9, 0, 3, 5, 6, 7, 0, 0, 2 },   // 0
             {0, 0, 5, 2, 9, 4, 0, 7, 3 },   // 1
@@ -313,20 +380,20 @@
         };
 
 
-        // 4 en la (7, 1)
-        // obliga a:
-        // 4 en la (2, 2)
-        // 5 en la (8, 1)
-        // obliga a:
-        // 1 en la (7, 0)
-        // 4 en la (0, 7)
-        // 5 en la (7, 4)
-        // obliga a:
-        // 2 en la (6, 0)
-        // 2 en la (8, 4)
-        // obliga a:
-        // 2 en la (7, 7)
-        public static int[,] MATRIZ_H = {
+    // 4 en la (7, 1)
+    // obliga a:
+    // 4 en la (2, 2)
+    // 5 en la (8, 1)
+    // obliga a:
+    // 1 en la (7, 0)
+    // 4 en la (0, 7)
+    // 5 en la (7, 4)
+    // obliga a:
+    // 2 en la (6, 0)
+    // 2 en la (8, 4)
+    // obliga a:
+    // 2 en la (7, 7)
+    private static readonly byte[,] MATRIZ_H = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {9, 0, 3, 5, 6, 7, 0, 4, 2 },   // 0
             {0, 0, 5, 2, 9, 4, 0, 7, 3 },   // 1
@@ -341,13 +408,13 @@
         };
 
 
-        // 4 en la (3, 0)
-        // 4 en la (4, 3)
-        // (las 2 opcionales obligan a:
-        // 4 en la (5, 8)
-        // 6 en la (3, 3)
-        // lleva a matriz NO soluble, falta poner un numero 4
-        public static int[,] MATRIZ_H_Sin_Solucion = {
+    // 4 en la (3, 0)
+    // 4 en la (4, 3)
+    // (las 2 opcionales obligan a:
+    // 4 en la (5, 8)
+    // 6 en la (3, 3)
+    // lleva a matriz NO soluble, falta poner un numero 4
+    private static readonly byte[,] MATRIZ_H_Sin_Solucion = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {9, 0, 3, 5, 6, 7, 0, 4, 2 },   // 0
             {0, 0, 5, 2, 9, 4, 0, 7, 3 },   // 1
@@ -362,8 +429,8 @@
         };
 
 
-        // Resuelto en 3852 pasos visitados, 73 en frontera
-        public static byte[,] DE_INTERNET_MEDIUM = {
+    // Resuelto en 3852 pasos visitados, 73 en frontera
+    private static readonly byte[,] DE_INTERNET_MEDIUM = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 6, 0, 9, 0, 4, 0, 0, 1 },
             {1, 8, 3, 0, 5, 7, 6, 4, 0 },
@@ -378,8 +445,8 @@
         };
 
 
-        // Resuelto en  pasos visitados,  en frontera
-        public static byte[,] DE_INTERNET_EXPERT = {
+    // Resuelto en  pasos visitados,  en frontera
+    private static readonly byte[,] DE_INTERNET_EXPERT = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 4, 0, 0, 0, 0, 1, 0, 6 },
             {0, 5, 0, 0, 0, 2, 4, 0, 0 },
@@ -394,8 +461,8 @@
         };
 
 
-        // Resuelto en 53 pasos visitados, 176 en frontera
-        public static byte[,] DE_INTERNET_HARD = {
+    // Resuelto en 53 pasos visitados, 176 en frontera
+    private static readonly byte[,] DE_INTERNET_HARD = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {9, 0, 4, 0, 0, 5, 6, 0, 0 },   // 0
             {0, 0, 0, 4, 9, 0, 0, 0, 0 },   // 1
@@ -409,7 +476,7 @@
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
 
-        public static byte[,] DE_INTERNET_EASY = {
+    private static readonly byte[,] DE_INTERNET_EASY = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 2, 3, 4, 9, 7, 0, 8, 5 },   // 0
             {5, 8, 0, 0, 2, 0, 7, 0, 4 },   // 1
@@ -424,7 +491,7 @@
         };
 
 
-        public static byte[,] DE_INTERNET_MEDIUM_2 = {
+    private static readonly byte[,] DE_INTERNET_MEDIUM_2 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {0, 1, 3, 0, 2, 0, 0, 6, 8 },   // 0
             {6, 8, 0, 0, 0, 0, 0, 0, 0 },   // 1
@@ -438,7 +505,7 @@
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
 
-        public static byte[,] DE_INTERNET_HARD_2 = {
+    private static readonly byte[,] DE_INTERNET_HARD_2 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {8, 0, 2, 0, 0, 0, 0, 0, 5 },   // 0
             {0, 0, 4, 0, 0, 0, 0, 3, 8 },   // 1
@@ -453,7 +520,7 @@
         };
 
 
-        public static byte[,] MATRIZ_MASTER = {
+    private static readonly byte[,] MATRIZ_MASTER = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {4, 0, 0, 9, 7, 0, 0, 0, 0 },   // 0
             {0, 9, 7, 0, 5, 0, 0, 6, 0 },   // 1
@@ -468,7 +535,7 @@
         };
 
 
-        public static byte[,] MATRIZ_MASTER_2 = {
+    private static readonly byte[,] MATRIZ_MASTER_2 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {9, 0, 0, 0, 5, 0, 0, 6, 0 },   // 0
             {0, 5, 3, 7, 0, 0, 0, 8, 0 },   // 1
@@ -484,7 +551,7 @@
         };
 
 
-        public static byte[,] MATRIZ_MASTER_3 = {
+    private static readonly byte[,] MATRIZ_MASTER_3 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {4, 7, 0, 1, 0, 8, 0, 0, 9 },   // 0
             {2, 0, 0, 0, 0, 0, 5, 0, 0 },   // 1
@@ -498,8 +565,7 @@
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
 
-
-        public static byte[,] MATRIZ_MASTER_4 = {
+    private static readonly byte[,] MATRIZ_MASTER_4 = {
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
             {6, 0, 5, 1, 4, 0, 0, 0, 7 },   // 0
             {0, 1, 0, 0, 0, 8, 0, 0, 0 },   // 1
@@ -512,5 +578,6 @@
             {0, 6, 0, 4, 5, 0, 9, 0, 0 }    // 8
         //   0, 1, 2, 3, 4, 5, 6, 7, 8
         };
-    }
+
+    #endregion
 }

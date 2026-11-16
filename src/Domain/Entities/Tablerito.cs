@@ -1,4 +1,4 @@
-﻿namespace SudokuLibrary.Models;
+﻿namespace Domain.Entities;
 
 public class Tablerito : IEquatable<Tablerito>, IComparable<Tablerito>
 {
@@ -7,11 +7,16 @@ public class Tablerito : IEquatable<Tablerito>, IComparable<Tablerito>
     public Tablerito()
     {   
     }
-
-    public Tablerito(Nodo nodo)
+    public Tablerito(Tablero tablero)
     {
-        this.Board = (byte[,])nodo.Tablero.Board.Clone();
-        this.CuentaConocidas = nodo.Tablero.CeldasConocidas.Count();
+        if(tablero != null)
+        {
+            this.Board = (byte[,])tablero.Board.Clone();
+            this.CuentaConocidas = tablero.CeldasConocidas.Count;
+        }
+    }
+    public Tablerito(Nodo nodo) : this(nodo.Tablero)
+    {
     }
 
     public int CompareTo(Tablerito? other)

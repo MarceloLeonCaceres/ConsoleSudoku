@@ -1,4 +1,6 @@
-﻿using SudokuLibrary.Models;
+﻿using Aplicacion.Interfaces;
+using Aplicacion.Models;
+using Domain.Entities;
 using System.Globalization;
 
 public sealed class ConsoleReporter : ISolverReporter
@@ -7,9 +9,9 @@ public sealed class ConsoleReporter : ISolverReporter
     public void OnProgress(Nodo nodo, int knownCells)
     {
         Console.WriteLine($"Conocidas: {knownCells}");
-        nodo.Print();
+        //nodo.Print();
         Console.WriteLine();
-    }   
+    }
 
     public void OnElapsed(SolverState state)
     {
@@ -21,7 +23,7 @@ public sealed class ConsoleReporter : ISolverReporter
     public void PrintProgress(Nodo nodo, int known)
     {
         Console.WriteLine($"Conocidas: {known}");
-        nodo.Print();
+        //nodo.Print();
         Console.WriteLine();
     }
 
@@ -42,9 +44,9 @@ public sealed class ConsoleReporter : ISolverReporter
         Console.WriteLine($"Tiempo: {result.State.Timer.Elapsed:h\\:mm\\:ss\\.fff}");
         Console.WriteLine();
 
-        result.Root.Print();
+        //result.Root.Print();
         Console.WriteLine();
-        result.SolutionNode.Print();
+        //result.SolutionNode.Print();
         Console.WriteLine();
 
         PrintActions(result);

@@ -1,4 +1,4 @@
-﻿namespace SudokuLibrary.Models;
+﻿namespace Domain.Entities;
 
 public static class BoardsComparer
 {
