@@ -27,6 +27,10 @@ public sealed class ConsoleReporter : ISolverReporter
     public void PrintSolution(SolveResult result)
     {
         Console.WriteLine("\n¡Solución encontrada!");
+        Console.WriteLine($"Inicio: {result.State.StartTime:T}");
+        Console.WriteLine($"Fin: {DateTime.Now:T}");
+        Console.WriteLine($"Tiempo: {result.State.Timer.Elapsed:h\\:mm\\:ss\\.fff}");
+        Console.WriteLine();
         PrintBoard(result.SolutionNode!.Tablero);
         Console.WriteLine($"Acciones tomadas: {result.Actions?.Count ?? 0}");
     }
@@ -34,6 +38,9 @@ public sealed class ConsoleReporter : ISolverReporter
     public void PrintNoSolution(SolveResult result)
     {
         Console.WriteLine("\nNo se encontró solución.");
+
+        Console.WriteLine($"Visitados: {result.State.Visited.Count}");
+        Console.WriteLine($"En frontera: {result.State.Frontier.Count}");
     }
 
     private static void PrintBoard(Tablero tablero)

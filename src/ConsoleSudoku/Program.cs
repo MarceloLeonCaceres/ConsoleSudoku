@@ -22,7 +22,7 @@ internal static class Program
         var validator = serviceProvider.GetRequiredService<ISudokuValidator>();
 
         // 3. Obtener matriz y construir nodo raíz
-        var matrizInicial = repository.GetPuzzle("DE_INTERNET_EASY");
+        var matrizInicial = repository.GetPuzzle("DE_INTERNET_EXPERT");
         var tableroRaiz = new Tablero(matrizInicial, validator);
         var nodoRaiz = new Nodo(tableroRaiz, null!, null!);
 
