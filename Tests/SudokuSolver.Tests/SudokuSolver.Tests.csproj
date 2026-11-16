@@ -15,7 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SudokuLibrary\SudokuLibrary.csproj" />
+    <ProjectReference Include="..\..\src\Aplicacion\Aplicacion.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
