@@ -58,15 +58,6 @@ public class Tablero : IComparable<Tablero>
         this.EsViable = padre.EsViable;
         this.EsSolucion = this.CeldasConocidas.Count == 81;
 
-        _dicCeldasPara = new Dictionary<int, List<Celda>>();
-        foreach (int num in padre.DicCeldasPara.Keys)
-        {
-            if (padre.DicCeldasPara[num].Count > 0)
-            {
-                _dicCeldasPara[num] = new List<Celda>(padre.DicCeldasPara[num]);
-            }
-        }
-
         _dicPendientes = new Dictionary<int, PendientesByNumber>();
         foreach (int num in padre.DicCeldasPara.Keys)
         {
@@ -75,6 +66,20 @@ public class Tablero : IComparable<Tablero>
                 _dicPendientes[num] = padre.DicPendientes[num].CopyPending();
             }
         }
+
+        _dicCeldasPara = new Dictionary<int, List<Celda>>();
+        foreach (int num in _dicPendientes.Keys)
+        {
+            if (padre.DicCeldasPara.TryGetValue(num, out var celdas) && celdas.Count > 0)
+            {
+                _dicCeldasPara[num] = new List<Celda>(celdas);
+            }
+            else
+            {
+                _dicCeldasPara[num] = new List<Celda>();
+            }
+        }
+
         if (accion != null)
         {
             ReduceDicPendientes(accion.Celda);
@@ -244,7 +249,7 @@ public class Tablero : IComparable<Tablero>
         foreach (byte num in DicPendientes.Keys)
         {
             int instanciasPendientesNum = DicPendientes[num].filas.Count;
-            int countCeldasFactiblesNum = DicCeldasPara[num].Count;
+            int countCeldasFactiblesNum = DicCeldasPara.TryGetValue(num, out var celdas) ? celdas.Count : 0;
 
             if (instanciasPendientesNum > 0 && instanciasPendientesNum <= menosInstancias)
             {
@@ -265,10 +270,11 @@ public class Tablero : IComparable<Tablero>
             }
             foreach (int k in DicPendientes[num].grupos)
             {
-                int cuenta = DicCeldasPara[num].Where(c => c.Z == k).Count();
+                var celdasGrupo = _dicCeldasPara.TryGetValue(num, out var lista) ? lista : new List<Celda>();
+                int cuenta = celdasGrupo.Count(c => c.Z == k);
                 if (cuenta == 1)
                 {
-                    Celda celdaUnicaPosible = DicCeldasPara[num].Where(c => c.Z == k).Select(x => x).Single();
+                    Celda celdaUnicaPosible = celdasGrupo.Single(c => c.Z == k);
                     Accion siguienteAccion = new Accion(celdaUnicaPosible, num);
                     accionesSiguientes.Add(siguienteAccion);
                 }
@@ -282,10 +288,13 @@ public class Tablero : IComparable<Tablero>
         {
             return (false, null);
         }
-
-        foreach (var celda in DicCeldasPara[numeroConMayorIndice])
+        // Búsqueda segura final
+        if (_dicCeldasPara.TryGetValue(numeroConMayorIndice, out var celdaFactibles))
         {
-            accionesSiguientes.Add(new Accion(celda, numeroConMayorIndice));
+            foreach (var celda in celdaFactibles)
+            {
+                accionesSiguientes.Add(new Accion(celda, numeroConMayorIndice));
+            }
         }
 
         if (accionesSiguientes.Count > 0)
@@ -354,7 +363,7 @@ public class Tablero : IComparable<Tablero>
             }
         }
 
-        foreach (int i in DicCeldasPara.Keys)
+        foreach (int i in DicCeldasPara.Keys.ToList())
         {
             this.DicCeldasPara[i].Remove(celda);
 

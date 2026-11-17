@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.Tests", "Tests\SudokuSolver.Tests\SudokuSolver.Tests.csproj", "{3F021B36-5B1B-48B7-8E3D-742D6EFF88B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuSolver.tests", "tests\SudokuSolver.Tests\SudokuSolver.Tests.csproj", "{3F021B36-5B1B-48B7-8E3D-742D6EFF88B4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1D70E158-07E2-4F87-87E4-55FE9AD67668}"
 EndProject

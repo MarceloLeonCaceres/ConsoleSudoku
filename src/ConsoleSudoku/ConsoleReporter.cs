@@ -26,7 +26,7 @@ public sealed class ConsoleReporter : ISolverReporter
 
     public void PrintSolution(SolveResult result)
     {
-        Console.WriteLine("\n¡Solución encontrada!");
+        Console.WriteLine("¡Solución encontrada!");
         Console.WriteLine($"Inicio: {result.State.StartTime:T}");
         Console.WriteLine($"Fin: {DateTime.Now:T}");
         Console.WriteLine($"Tiempo: {result.State.Timer.Elapsed:h\\:mm\\:ss\\.fff}");
